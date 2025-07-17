@@ -48,3 +48,21 @@ function ChatWindow() {
 
         <button type="submit">Send</button>
       </form>
+
+      <div className="chat-history">
+        {messages.map((msg) => (
+          <div
+            key={msg.id}
+            className={`chat-bubble ${msg.role === 'Loser' ? 'loser' : 'finder'}`}
+          >
+            <strong>{msg.role}:</strong>
+            <p>{msg.text}</p>
+            {msg.file && <img src={msg.file} alt="attachment" />}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default ChatWindow;

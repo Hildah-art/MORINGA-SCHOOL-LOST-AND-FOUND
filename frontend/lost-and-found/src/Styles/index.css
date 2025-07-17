@@ -63,7 +63,7 @@ button:hover {
 }
 
 
-/* ✅ General Container */
+
 .chat-window,
 .claim-verification {
   padding: 1.5rem;
@@ -80,7 +80,7 @@ button:hover {
   color: #2e4734;
 }
 
-/* ✅ Forms */
+
 form {
   display: flex;
   flex-direction: column;
@@ -114,7 +114,7 @@ button:hover {
   background: #2e4734;
 }
 
-/* ✅ Chat Specific */
+
 .chat-history {
   margin-top: 1.5rem;
 }
@@ -133,7 +133,6 @@ button:hover {
   border-radius: 6px;
 }
 
-/* ✅ Claim Confirmation */
 .confirmation {
   margin-top: 1rem;
   background: #e6f4ea;

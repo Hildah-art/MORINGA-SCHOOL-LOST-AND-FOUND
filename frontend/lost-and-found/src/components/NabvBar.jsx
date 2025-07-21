@@ -1,15 +1,16 @@
-import "./NavBar.css";
+import { Link } from 'react-router-dom';
+import './NavBar.css';
 
 const NavBar = () => {
   return (
     <header className="navbar">
       <nav className="navbar-container">
-        <div className="logo">LOST & FOUND</div>
+        <Link to="/" className="logo">LOST & FOUND</Link>
         <div className="nav-links">
-          <button className="nav-btn">Home</button>
-          <button className="nav-btn">Report lost item</button>
-          <button className="nav-btn">Report found item</button>
-          <button className="nav-btn">Profile</button>
+          <Link to="/" className="nav-btn">Home</Link>
+          <Link to="/report-lost" className="nav-btn">Report lost item</Link>
+          <Link to="/report-found" className="nav-btn">Report found item</Link>
+          <Link to="/profile" className="nav-btn">Profile</Link>
         </div>
       </nav>
     </header>

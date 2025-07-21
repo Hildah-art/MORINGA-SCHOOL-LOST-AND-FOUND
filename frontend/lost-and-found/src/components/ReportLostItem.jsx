@@ -26,6 +26,7 @@ function ReportLostItem() {
   };
 
   return (
+    <div className='all'>
     <div className="report-form-container">
       <h2>Report Lost Item</h2>
       <form onSubmit={handleSubmit} className="report-form">
@@ -77,6 +78,7 @@ function ReportLostItem() {
 
         <button type="submit">Submit report</button>
       </form>
+    </div>
     </div>
   );
 }

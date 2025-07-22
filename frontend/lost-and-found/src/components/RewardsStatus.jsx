@@ -1,5 +1,4 @@
 
-
 function RewardStatus({ rewards, onConfirm }) {
   return (
     <div className="reward-container">

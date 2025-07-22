@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CgSpinner } from "react-icons/cg";
+
 
 const PostItem = () => {
     const categories = [
@@ -44,89 +44,79 @@ const PostItem = () => {
     };
 
     return (
-        <div className="min-h-screen flex flex-col justify-center p-6 bg-white">
-            {/* TOP HEADING */}
-            <h1 className="text-4xl font-extrabold text-center text-[#2E4734] mb-6">
-                Found Item Reporting
-            </h1>
+        <div className="postitem-container">
+            <h1 className="postitem-heading">Found Item Reporting</h1>
 
-            {/* FORM CARD */}
-            <div className="w-full max-w-md mx-auto bg-[#F7F7F7] shadow-lg rounded-2xl p-8">
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    {/* Item Name */}
-                    <div className="flex flex-col space-y-1 text-[#1A1A1A]">
-                        <label htmlFor="name" className="font-medium">Item Name</label>
+            <div className="postitem-form-card">
+                <form onSubmit={handleSubmit}>
+                    <div className="postitem-label-group">
+                        <label htmlFor="name">Item Name</label>
                         <input
                             type="text"
                             id="name"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             placeholder="Enter item name"
-                            className="px-4 py-2 bg-white rounded-3xl border border-gray-300 focus:outline-none"
+                            className="postitem-input"
                             required
                         />
                     </div>
 
-                    {/* Location */}
-                    <div className="flex flex-col space-y-1 text-[#1A1A1A]">
-                        <label htmlFor="location" className="font-medium">Item Location</label>
+                    <div className="postitem-label-group">
+                        <label htmlFor="location">Item Location</label>
                         <input
                             type="text"
                             id="location"
                             value={location}
                             onChange={(e) => setLocation(e.target.value)}
                             placeholder="Enter location"
-                            className="px-4 py-2 bg-white rounded-3xl border border-gray-300 focus:outline-none"
+                            className="postitem-input"
                             required
                         />
                     </div>
 
-                    {/* Date */}
-                    <div className="flex flex-col space-y-1 text-[#1A1A1A]">
-                        <label htmlFor="date" className="font-medium">Date Found</label>
+                    <div className="postitem-label-group">
+                        <label htmlFor="date">Date Found</label>
                         <input
                             type="date"
                             id="date"
                             value={date}
                             onChange={(e) => setDate(e.target.value)}
-                            className="px-4 py-2 bg-white rounded-3xl border border-gray-300 focus:outline-none"
+                            className="postitem-input"
                             required
                         />
                     </div>
 
-                    {/* Image */}
-                    <div className="flex flex-col space-y-1 text-[#1A1A1A]">
-                        <label htmlFor="image" className="font-medium">Upload Image</label>
+                    <div className="postitem-label-group">
+                        <label htmlFor="image">Upload Image</label>
                         <input
                             type="file"
                             accept="image/*"
                             id="image"
                             onChange={handleImageChange}
-                            className="px-4 py-2 bg-white rounded-3xl border border-gray-300 focus:outline-none"
+                            className="postitem-file-input"
                         />
                     </div>
 
-                    {/* Description */}
-                    <div className="flex flex-col space-y-1 text-[#1A1A1A]">
-                        <label htmlFor="description" className="font-medium">Description</label>
+                    <div className="postitem-label-group">
+                        <label htmlFor="description">Description</label>
                         <textarea
                             id="description"
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
                             placeholder="Describe the item"
-                            className="px-4 py-2 bg-white rounded-3xl border border-gray-300 focus:outline-none"
+                            className="postitem-textarea"
                             required
                         />
                     </div>
 
-                    {/* Category */}
-                    <div className="flex flex-col space-y-1 text-[#1A1A1A]">
-                        <label htmlFor="category" className="font-medium">Category</label>
+                    <div className="postitem-label-group">
+                        <label htmlFor="category">Category</label>
                         <select
                             id="category"
                             value={category}
                             onChange={(e) => setCategory(e.target.value)}
-                            className="px-4 py-2 bg-white rounded-3xl border border-gray-300 focus:outline-none"
+                            className="postitem-select"
                             required
                         >
                             <option value="">Select category</option>
@@ -138,13 +128,8 @@ const PostItem = () => {
                         </select>
                     </div>
 
-                    {/* Submit */}
-                    <div className="flex justify-center">
-                        <button
-                            type="submit"
-                            className="mt-4 w-52 bg-[#224F35] flex items-center justify-center h-10 hover:bg-[#1c3f2b] text-white font-semibold py-2 rounded-lg transition duration-300"
-                        >
-                            {loading && <CgSpinner size={20} className="animate-spin mr-2" />}
+                    <div className="postitem-button-wrapper">
+                        <button type="submit" className="postitem-button" disabled={loading}>
                             {loading ? "Posting..." : "Submit"}
                         </button>
                     </div>

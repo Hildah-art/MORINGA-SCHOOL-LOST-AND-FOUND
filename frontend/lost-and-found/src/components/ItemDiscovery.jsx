@@ -1,6 +1,8 @@
+// src/components/ItemDiscovery.jsx
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+
 
 const TABS = ["All", "Lost", "Found"];
 const URGENCY_LEVELS = ["Low", "Medium", "High"];
@@ -17,7 +19,7 @@ const ItemDiscovery = () => {
             .then(res => {
                 setItems(res.data);
                 setFilteredItems(res.data);
-            })
+          })
             .catch(err => console.error(err));
     }, []);
 
@@ -55,18 +57,15 @@ const ItemDiscovery = () => {
     }, [activeTab, search, filters, items]);
 
     return (
-        <div className="p-4 min-h-screen bg-[#FFFFFF]">
-            <h1 className="text-4xl font-extrabold text-center text-[#2E4734] mb-6">Item Listings</h1>
+        <div className="itemdiscovery-wrapper">
+            <h1 className="itemdiscovery-title">Item Listings</h1>
 
-            <div className="flex flex-wrap justify-between mb-4 gap-2">
-                <div className="flex gap-2">
+            <div className="itemdiscovery-top-controls">
+                <div className="itemdiscovery-tabs">
                     {TABS.map(tab => (
                         <button
                             key={tab}
-                            className={`px-4 py-2 rounded-full transition ${activeTab === tab
-                                    ? "bg-[#2E4734] text-white"
-                                    : "bg-[#F7F7F7] text-[#1A1A1A]"
-                                }`}
+                            className={`tab-button ${activeTab === tab ? "active" : ""}`}
                             onClick={() => setActiveTab(tab)}
                         >
                             {tab}
@@ -79,14 +78,14 @@ const ItemDiscovery = () => {
                     placeholder="Search items..."
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    className="px-4 py-2 border border-[#D1D5DB] text-[#1A1A1A] rounded-xl w-full sm:w-1/3 bg-[#FFFFFF]"
+                    className="search-input"
                 />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+            <div className="itemdiscovery-filters">
                 <select
                     onChange={(e) => setFilters(prev => ({ ...prev, category: e.target.value }))}
-                    className="p-2 rounded-xl border border-[#D1D5DB] bg-[#FFFFFF] text-[#1A1A1A]"
+                    className="filter-select"
                 >
                     <option value="">All Categories</option>
                     <option value="Electronics">Electronics</option>
@@ -97,19 +96,19 @@ const ItemDiscovery = () => {
                 <input
                     type="date"
                     onChange={(e) => setFilters(prev => ({ ...prev, date: e.target.value }))}
-                    className="p-2 rounded-xl border border-[#D1D5DB] bg-[#FFFFFF] text-[#1A1A1A]"
+                    className="filter-input"
                 />
 
                 <input
                     type="text"
                     placeholder="Location"
                     onChange={(e) => setFilters(prev => ({ ...prev, location: e.target.value }))}
-                    className="p-2 rounded-xl border border-[#D1D5DB] bg-[#FFFFFF] text-[#1A1A1A]"
+                    className="filter-input"
                 />
 
                 <select
                     onChange={(e) => setFilters(prev => ({ ...prev, urgency: e.target.value }))}
-                    className="p-2 rounded-xl border border-[#D1D5DB] bg-[#FFFFFF] text-[#1A1A1A]"
+                    className="filter-select"
                 >
                     <option value="">All Urgencies</option>
                     {URGENCY_LEVELS.map(level => (
@@ -118,25 +117,24 @@ const ItemDiscovery = () => {
                 </select>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="itemdiscovery-grid">
                 {filteredItems.map(item => (
-                    <div key={item.id} className="bg-[#F7F7F7] shadow rounded-lg p-4">
+                    <div key={item.id} className="item-card">
                         <img
                             src={item.imageUrl || "https://via.placeholder.com/150"}
                             alt={item.name}
-                            className="w-full h-40 object-cover rounded-md mb-2"
+                            className="item-image"
                         />
-                        <h2 className="text-lg font-bold text-[#1A1A1A] mb-1">{item.name}</h2>
-                        <p className="text-sm text-[#D1D5DB] mb-1">{item.description.slice(0, 60)}...</p>
-                        <p className="text-sm text-[#1A1A1A]">Date: {item.date}</p>
-                        <p className="text-sm text-[#1A1A1A]">Urgency: {item.urgency || "Not specified"}</p>
+                        <h2 className="item-title">{item.name}</h2>
+                        <p className="item-description">{item.description.slice(0, 60)}...</p>
+                        <p className="item-date">Date: {item.date}</p>
+                        <p className="item-urgency">Urgency: {item.urgency || "Not specified"}</p>
                         <Link
                             to={`/items/${item.id}`}
-                            className="mt-2 inline-block text-[#224F35] hover:underline"
+                            className="item-link"
                         >
                             View Details
                         </Link>
-
                     </div>
                 ))}
             </div>

@@ -390,3 +390,217 @@ button[type="submit"] {
 button[type="submit"]:hover {
   background-color: #3a5c3f;
 }
+
+.header {
+  margin-bottom: 3rem;
+  text-align: center;
+}
+
+.main-title {
+  font-size: 2.25rem; /* text-4xl */
+  font-weight: 800;    /* font-extrabold */
+  color: #2E4734;
+  margin-bottom: 1.5rem;
+}
+
+.subtitle {
+  color: #D1D5DB;
+}
+
+.nav-links {
+  margin-top: 1rem;
+}
+
+.nav-link {
+  color: #E46D2F;
+  text-decoration: underline;
+  margin-right: 1rem;
+  transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+  color: #2E4734;
+}
+
+.section {
+  background-color: #F7F7F7;
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+  border-radius: 1rem; /* rounded-2xl */
+  padding: 1.5rem;
+  margin: auto;
+}
+
+.found-section {
+  max-width: 48rem; /* max-w-3xl */
+}
+
+.discovery-section {
+  max-width: 72rem; /* max-w-6xl */
+}
+
+.login-section {
+  max-width: 36rem; /* max-w-xl */
+  padding: 1rem;
+}
+
+.container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 1.5rem;
+  background-color: white;
+}
+
+.heading {
+  font-size: 2.25rem; /* text-4xl */
+  font-weight: 800;
+  text-align: center;
+  color: #2E4734;
+  margin-bottom: 1.5rem;
+}
+
+.formCard {
+  width: 100%;
+  max-width: 28rem;
+  margin: 0 auto;
+  background-color: #F7F7F7;
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+  border-radius: 1rem;
+  padding: 2rem;
+}
+
+.labelGroup {
+  display: flex;
+  flex-direction: column;
+  color: #1A1A1A;
+  margin-bottom: 1rem;
+}
+
+.input,
+.textarea,
+.select,
+.fileInput {
+  padding: 0.5rem 1rem;
+  background-color: white;
+  border-radius: 1.5rem;
+  border: 1px solid #d1d5db;
+  outline: none;
+}
+
+.buttonWrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.button {
+  width: 13rem;
+  background-color: #224F35;
+  height: 2.5rem;
+  color: white;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  margin-top: 1rem;
+  transition: background-color 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.button:hover {
+  background-color: #1c3f2b;
+}
+
+.spinner {
+  margin-right: 0.5rem;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* src/components/ItemDiscovery.css */
+
+/* src/components/PostItem.css */
+
+.postitem-container {
+  padding: 2rem;
+  max-width: 700px;
+  margin: 0 auto;
+  background-color: #ffffff;
+}
+
+.postitem-heading {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2E4734;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.postitem-form-card {
+  background-color: #f7f7f7;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.postitem-label-group {
+  margin-bottom: 1.25rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.postitem-label-group label {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #1a1a1a;
+}
+
+.postitem-input,
+.postitem-select,
+.postitem-textarea,
+.postitem-file-input {
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  background-color: #fff;
+  color: #1a1a1a;
+  font-size: 1rem;
+  width: 100%;
+}
+
+.postitem-textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.postitem-file-input {
+  padding: 0.4rem;
+  background-color: #ffffff;
+}
+
+.postitem-button-wrapper {
+  text-align: right;
+}
+
+.postitem-button {
+  background-color: #2E4734;
+  color: #ffffff;
+  padding: 0.75rem 2rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.postitem-button:hover {
+  background-color: #1e3223;
+}

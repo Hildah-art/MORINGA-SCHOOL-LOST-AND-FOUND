@@ -1,3 +1,44 @@
+.hero-container {
+  height: 100vh;
+  background: linear-gradient(to right, #1b5e20, #4caf50); 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  text-align: center;
+  padding: 20px;
+}
+
+.hero-content {
+  max-width: 600px;
+}
+
+.hero-content h1 {
+  font-size: 3rem;
+  margin-bottom: 20px;
+}
+
+.hero-content p {
+  font-size: 1.3rem;
+  margin-bottom: 30px;
+}
+
+.hero-buttons button {
+  background-color: white;
+  color: #1b5e20;
+  border: none;
+  padding: 12px 28px;
+  margin: 0 10px;
+  font-size: 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.hero-buttons button:hover {
+  background-color: #c8e6c9;
+}
+
 .reward-container {
   padding: 1.5rem;
   background: #fafafa;
@@ -244,6 +285,8 @@ button:hover {
   color: #ffffff; 
   padding: 1rem 1.5rem;
 }
+
+
 
 .navbar-container {
   max-width: 1120px; 
@@ -603,4 +646,43 @@ button[type="submit"]:hover {
 
 .postitem-button:hover {
   background-color: #1e3223;
+}
+
+.sidebar-container {
+  position: relative;
+}
+
+.toggle-button {
+  background-color: #333; /* Replace green with a neutral dark tone */
+  color: white;
+  padding: 10px 16px;
+  font-size: 18px;
+  border: none;
+  cursor: pointer;
+  margin-bottom: 8px;
+  float: right; /* Align button to the right */
+}
+
+.sidebar {
+  background-color: #333; /* Dark background for contrast */
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  color: white;
+  position: absolute;
+  right: 0; /* Sidebar on the right */
+  top: 50px;
+  z-index: 100;
+  box-shadow: -2px 0 10px rgba(0,0,0,0.3);
+}
+
+.sidebar a {
+  color: white; /* White text inside menu */
+  text-decoration: none;
+}
+
+.sidebar a.active {
+  font-weight: bold;
+  text-decoration: underline;
 }

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './ReportLostItem.css';
+
 
 function ReportLostItem() {
   const [formData, setFormData] = useState({

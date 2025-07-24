@@ -20,6 +20,7 @@ import PaymentHistory from './pages/PaymentHistory';
 import ResolveDisputes from './pages/ResolveDisputes';
 import Notifications from './pages/Notifications';
 import Reports from './pages/Reports';
+import Signup from './components/SignUp';
 
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
       <Layout>
         <Routes>
           <Route path="/" element={<LandingPage />} />
+          <Route path="/signup" element={<Signup />} />
           <Route path="/approve-items" element={<ApproveItems />} />
           <Route path="/add-items" element={<AddItems />} />
           <Route path="/manage-users" element={<ManageUsers />} />

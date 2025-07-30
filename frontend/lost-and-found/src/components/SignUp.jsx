@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 
-
 function Signup() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: ""
   });
+
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
 
   function handleChange(e) {
     const { name, value } = e.target;
@@ -16,10 +18,31 @@ function Signup() {
     }));
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    console.log("Submitted:", formData);
-    // TODO: Add actual signup logic here
+    setMessage("");
+    setError("");
+
+    try {
+      const response = await fetch("http://localhost:5000/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(formData)
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Signup failed.");
+      }
+
+      const data = await response.json();
+      setMessage(`Signup successful! Welcome, ${data.name || formData.name}.`);
+      setFormData({ name: "", email: "", password: "" });
+    } catch (err) {
+      setError(err.message);
+    }
   }
 
   return (
@@ -61,6 +84,9 @@ function Signup() {
 
         <button type="submit">Create Account</button>
       </form>
+
+      {message && <p style={{ color: "green" }}>{message}</p>}
+      {error && <p style={{ color: "red" }}>{error}</p>}
     </div>
   );
 }

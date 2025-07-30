@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-
 const LoginForm = () => {
   const navigate = useNavigate();
 
@@ -9,14 +8,30 @@ const LoginForm = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (email === "user@example.com" && password === "123456") {
-      setError("");
-      navigate("/profile");
-    } else {
-      setError("Invalid email or password.");
+    try {
+      const response = await fetch("http://localhost:5000/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setError("");
+        // You can store user info or token here if needed
+        navigate("/profile");
+      } else {
+        setError(data.error || "Login failed.");
+      }
+    } catch (err) {
+      setError("An error occurred. Please try again.");
+      console.error(err);
     }
   };
 

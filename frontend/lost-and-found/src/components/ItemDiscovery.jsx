@@ -122,11 +122,11 @@ const ItemDiscovery = () => {
                     <p className="col-span-full text-gray-500 text-center">No items found.</p>
                 ) : (
                     items.map((item) => (
-                        <div key={item.id} className="border p-4 rounded shadow bg-white">
+                        <div key={`${item.type}-${item.id}`} className="border p-4 rounded shadow bg-white">
                             <img
                                 src={
-                                    item.photo // 🔁 adjust this key to match your backend (e.g., item.image, item.image_path, item.image_url)
-                                        ? `${API_BASE}/${item.photo}`
+                                    item.image_url
+                                        ? item.image_url
                                         : "https://via.placeholder.com/300x200.png?text=No+Image"
                                 }
                                 alt={item.title || "Item"}
@@ -134,10 +134,10 @@ const ItemDiscovery = () => {
                             />
                             <h3 className="text-lg font-semibold">{item.title || "Untitled Item"}</h3>
                             <p className="text-sm text-gray-600">{item.description || "No description provided."}</p>
-                            <p className="text-sm">📦 <strong>Category:</strong> {item.category || "N/A"}</p>
-                            <p className="text-sm">🚨 <strong>Urgency:</strong> {item.urgency || "N/A"}</p>
-                            <p className="text-sm">📍 <strong>Location:</strong> {item.location || "N/A"}</p>
-                            <p className="text-sm">📅 <strong>Date:</strong> {item.date?.slice(0, 10) || "N/A"}</p>
+                            <p className="text-sm"> <strong>Category:</strong> {item.category || "N/A"}</p>
+                            <p className="text-sm"> <strong>Urgency:</strong> {item.urgency || "N/A"}</p>
+                            <p className="text-sm"><strong>Location:</strong> {item.location || "N/A"}</p>
+                            <p className="text-sm"> <strong>Date:</strong> {item.date?.slice(0, 10) || "N/A"}</p>
                         </div>
                     ))
                 )}

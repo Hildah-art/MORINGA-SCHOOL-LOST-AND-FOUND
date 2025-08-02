@@ -44,8 +44,8 @@ class LostItem(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     title = db.Column(db.String(100), nullable=False)
-    description = db.Column(db.Text)  # ✅ Add this
-    location = db.Column(db.String(255))  # ✅ Add this
+    description = db.Column(db.Text)  
+    location = db.Column(db.String(255))  
     category = db.Column(db.String(50))
     date = db.Column(db.Date, nullable=False)
     urgency = db.Column(db.String(20))
@@ -66,6 +66,7 @@ class FoundItem(db.Model):
     description = db.Column(db.Text)
     location_found = db.Column(db.String(255))
     date_found = db.Column(db.Date)
+    category = db.Column(db.String(50))
     image_url = db.Column(db.String(255))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 

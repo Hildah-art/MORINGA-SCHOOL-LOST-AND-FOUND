@@ -1,9 +1,10 @@
 import os
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, url_for
 from werkzeug.security import generate_password_hash
 from werkzeug.security import check_password_hash
 from .models import db, User, LostItem, FoundItem, Claim, Message, Notification, Reward, Comment
 from datetime import datetime
+from flask import render_template
 
 routes = Blueprint('routes', __name__)
 
@@ -106,7 +107,7 @@ def create_found_item():
     location_found = request.form.get('location')  # ✅ matches model
     date_found = request.form.get('date_found')  # Format: YYYY-MM-DD
     description = request.form.get('description')
-    category = request.form.get('category')  # Optional if not in model
+    category = request.form.get('category') 
     user_id = request.form.get('user_id')
 
     image_file = request.files.get('image')
@@ -141,24 +142,25 @@ def get_all_items():
 
     formatted_lost = [{
         "id": item.id,
-        "name": item.title,
-        "description": item.description if hasattr(item, "description") else "",
-        "image_url": item.image_url,
-        "location": item.location if hasattr(item, "location") else "",
+        "title": item.title,
+        "description": item.description or "",
+        "image_url": item.image_url or "",  # ← Directly use the full URL
+        "location": item.location or "",
         "date": item.date.strftime("%Y-%m-%d") if item.date else "",
-        "urgency": item.urgency,
-        "category": item.category,
+        "urgency": item.urgency or "",
+        "category": item.category or "",
         "type": "lost"
     } for item in lost_items]
 
     formatted_found = [{
         "id": item.id,
-        "name": item.title,
-        "description": item.description,
-        "image_url": item.image_url,
-        "location": item.location_found,
+        "title": item.title,
+        "description": item.description or "",
+        "image_url": item.image_url or "",  # ← Directly use the full URL
+        "location": item.location_found or "",
         "date": item.date_found.strftime("%Y-%m-%d") if item.date_found else "",
-        "urgency": "",  # Found items may not have urgency
+        "urgency": "",
+        "category": item.category or "",
         "type": "found"
     } for item in found_items]
 

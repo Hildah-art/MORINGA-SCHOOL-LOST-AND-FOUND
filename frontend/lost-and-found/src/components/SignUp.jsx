@@ -4,7 +4,9 @@ function Signup() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    password: ""
+    password: "",
+    phone: "",
+    role: ""
   });
 
   const [message, setMessage] = useState("");
@@ -39,7 +41,13 @@ function Signup() {
 
       const data = await response.json();
       setMessage(`Signup successful! Welcome, ${data.name || formData.name}.`);
-      setFormData({ name: "", email: "", password: "" });
+      setFormData({
+        name: "",
+        email: "",
+        password: "",
+        phone: "",
+        role: ""
+      });
     } catch (err) {
       setError(err.message);
     }
@@ -80,6 +88,26 @@ function Signup() {
             onChange={handleChange}
             required
           />
+        </label>
+
+        <label>
+          Phone Number:
+          <input
+            type="text"
+            name="phone"
+            value={formData.phone}
+            onChange={handleChange}
+            required
+          />
+        </label>
+
+        <label>
+          Role:
+          <select name="role" value={formData.role} onChange={handleChange} required>
+            <option value="">Select Role</option>
+            <option value="student">Student</option>
+            <option value="staff">Staff</option>
+          </select>
         </label>
 
         <button type="submit">Create Account</button>

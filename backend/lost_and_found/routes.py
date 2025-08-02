@@ -8,6 +8,9 @@ from flask import render_template
 
 routes = Blueprint('routes', __name__)
 
+
+
+
 # -------------------- USERS --------------------
 @routes.route('/users', methods=['GET'])
 def get_users():
@@ -59,6 +62,29 @@ def signup():
         # Add other fields here if needed (avoid password!)
     }
 }), 201
+
+# -------------------- LOGIN --------------------
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    email = data.get("email")
+    password = data.get("password")
+
+    user = User.query.filter_by(email=email).first()
+
+    if user and user.check_password(password):
+        access_token = create_access_token(identity=user.id)
+        return jsonify({
+            "message": "Login successful",
+            "token": access_token,
+            "user": {
+                "full_name": user.name,
+                "email": user.email,
+                "profile_image": user.profile_image
+            }
+        }), 200
+    return jsonify({"error": "Invalid credentials"}), 401
+
 
 
 # -------------------- LOST ITEMS --------------------
@@ -241,6 +267,25 @@ def get_reward(item_id):
     if reward:
         return jsonify(reward.serialize())
     return jsonify({"error": "Reward not found"}), 404
+#----------------------PROFILE--------------------
+
+
+@app.route('/profile', methods=['GET'])
+@jwt_required()
+def profile():
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    return jsonify({
+        "user": {
+            "full_name": user.name,
+            "email": user.email,
+            "profile_image": user.profile_image
+        }
+    }), 200
+
 
 # -------------------- MESSAGES --------------------
 @routes.route('/messages', methods=['POST'])

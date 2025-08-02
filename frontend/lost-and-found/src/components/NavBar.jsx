@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
 
 const NavBar = () => {
+  const isLoggedIn = !!localStorage.getItem("user");
+
   return (
     <header className="navbar">
       <nav className="navbar-container">
@@ -9,8 +11,21 @@ const NavBar = () => {
           <Link to="/" className="nav-btn">Home</Link>
           <Link to="/report-lost-item" className="nav-btn">Report Lost Item</Link>
           <Link to="/post-item" className="nav-btn">Report Found Item</Link>
-          <Link to="/login" className="nav-btn">Profile</Link>
-          {/* If you add a /profile route later, replace /login above with /profile */}
+
+          {isLoggedIn && (
+            <>
+              <Link to="/profile" className="nav-btn">Profile</Link>
+              <button
+                className="nav-btn"
+                onClick={() => {
+                  localStorage.clear();
+                  window.location.href = "/login";
+                }}
+              >
+                Logout
+              </button>
+            </>
+          )}
         </div>
       </nav>
     </header>

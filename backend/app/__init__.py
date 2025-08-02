@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_cors import CORS
 from dotenv import load_dotenv
 import os
 from .config import db, migrate, jwt, api, ma
@@ -9,6 +10,8 @@ load_dotenv()
 
 def create_app():
     app = Flask(__name__)
+
+    CORS(app)
 
     app.config["SQLALCHEMY_DATABASE_URI"] = (
         os.getenv("DATABASE_URL") or "sqlite:///lostfound.db"

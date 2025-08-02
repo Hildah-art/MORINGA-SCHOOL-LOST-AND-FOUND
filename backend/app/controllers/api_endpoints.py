@@ -24,7 +24,6 @@ found_items_schema = FoundItemSchema(many=True)
 
 class TestAPI(Resource):
     def get(self):
-
         now = datetime.now().isoformat()
 
         start = time()

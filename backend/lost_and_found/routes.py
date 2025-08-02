@@ -1,9 +1,10 @@
 import os
 from flask import Blueprint, request, jsonify, url_for
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.security import check_password_hash
 from .models import db, User, LostItem, FoundItem, Claim, Message, Notification, Reward, Comment
 from datetime import datetime
+from flask_jwt_extended import jwt_required, get_jwt_identity, create_access_token
 from flask import render_template
 
 routes = Blueprint('routes', __name__)
@@ -12,79 +13,12 @@ routes = Blueprint('routes', __name__)
 
 
 # -------------------- USERS --------------------
-@routes.route('/users', methods=['GET'])
-def get_users():
-    users = User.query.all()
-    return jsonify([u.serialize() for u in users])
-
-@routes.route('/users', methods=['POST'])
-def create_user():
-    data = request.get_json()
-
-    user = User(
-        full_name=data['name'],
-        email=data['email'],
-        phone=data['phone'],
-        password_hash=generate_password_hash(data['password'])
-    )
-    db.session.add(user)
-    db.session.commit()
-    return jsonify(user.serialize()), 201
-
-# -------------------- SIGNUP --------------------
-@routes.route('/signup', methods=['POST', 'OPTIONS'])
-def signup():
-    if request.method == 'OPTIONS':
-        return jsonify({'status': 'CORS preflight OK'}), 200
-
-    data = request.get_json()
-
-    existing_user = User.query.filter_by(email=data['email']).first()
-    if existing_user:
-        return jsonify({'error': 'Email already exists'}), 409
-
-    new_user = User(
-        full_name=data['name'],
-        email=data['email'],
-        phone=data.get('phone', 'N/A'),
-        password_hash=generate_password_hash(data['password'])
-    )
-    db.session.add(new_user)
-    db.session.commit()
-
-    return jsonify({
-    "message": "User created successfully",
-    "user": {
-        "id": new_user.id,
-        "full_name": new_user.full_name,
-        "email": new_user.email,
-        "role": new_user.role
-        # Add other fields here if needed (avoid password!)
-    }
-}), 201
-
-# -------------------- LOGIN --------------------
-@app.route('/login', methods=['POST'])
-def login():
-    data = request.get_json()
-    email = data.get("email")
-    password = data.get("password")
-
-    user = User.query.filter_by(email=email).first()
-
-    if user and user.check_password(password):
-        access_token = create_access_token(identity=user.id)
-        return jsonify({
-            "message": "Login successful",
-            "token": access_token,
-            "user": {
-                "full_name": user.name,
-                "email": user.email,
-                "profile_image": user.profile_image
-            }
-        }), 200
-    return jsonify({"error": "Invalid credentials"}), 401
-
+@routes.route('/users/<int:id>', methods=['GET'])
+def get_user_by_id(id):
+    user = User.query.get(id)
+    if user:
+        return jsonify(user.serialize()), 200
+    return jsonify({"error": "User not found"}), 404
 
 
 # -------------------- LOST ITEMS --------------------
@@ -103,7 +37,7 @@ def create_lost_item():
 
     if image_file:
         upload_folder = os.path.join('static', 'uploads')
-        os.makedirs(upload_folder, exist_ok=True)  # ✅ ensure directory exists
+        os.makedirs(upload_folder, exist_ok=True)  
 
         image_path = os.path.join(upload_folder, image_file.filename)
         image_file.save(image_path)
@@ -270,7 +204,7 @@ def get_reward(item_id):
 #----------------------PROFILE--------------------
 
 
-@app.route('/profile', methods=['GET'])
+@routes.route('/profile', methods=['GET'])
 @jwt_required()
 def profile():
     current_user_id = get_jwt_identity()
@@ -313,15 +247,30 @@ def login():
         return jsonify({'status': 'CORS preflight OK'}), 200
 
     data = request.get_json()
+    
+    # Debug: print the received login data
+    print("Login data received:", data)
 
-    if not data or 'email' not in data or 'password' not in data:
-        return jsonify({'error': 'Missing email or password'}), 400
-
+    # Step 1: Query for user
     user = User.query.filter_by(email=data['email']).first()
 
-    if not user or not check_password_hash(user.password_hash, data['password']):
-        return jsonify({'error': 'Invalid email or password'}), 401
+    if not user:
+        print("User not found for email:", data['email'])
+        return jsonify({'error': 'User not found'}), 404
 
+    # Step 2: Check password
+    try:
+        valid_password = check_password_hash(user.password_hash, data['password'])
+    except Exception as e:
+        print("Error during password check:", str(e))
+        return jsonify({'error': 'Password check failed'}), 500
+
+    if not valid_password:
+        print("Invalid password for user:", data['email'])
+        return jsonify({'error': 'Invalid credentials'}), 401
+
+    # Step 3: Return success
+    print("Login successful for:", user.email)
     return jsonify({
         "message": "Login successful",
         "user": {

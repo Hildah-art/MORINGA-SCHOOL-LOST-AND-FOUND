@@ -9,16 +9,27 @@ db = SQLAlchemy()
 class User(db.Model):
     __tablename__ = 'users'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True) 
     full_name = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(100), unique=True, nullable=False)
-    password_hash = db.Column(db.String(128), nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    phone = db.Column(db.String(20), nullable=False)
+    password_hash = db.Column(db.String(255), nullable=False)
+    role = db.Column(db.String(20), default='user')
+    student_id = db.Column(db.String(50), nullable=True)
+    profile_photo = db.Column(db.String(255), nullable=True)
+    created_at = db.Column(db.DateTime, server_default=db.func.now())
 
-    student_id = db.Column(db.String(50))
-    role = db.Column(db.String(20))  
-    phone = db.Column(db.String(20))
-    profile_photo = db.Column(db.String(255))
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    def serialize(self):
+        return {
+            "id": self.id,
+            "full_name": self.full_name,
+            "email": self.email,
+            "student_id": self.student_id,
+            "role": self.role,
+            "phone": self.phone,
+            "profile_photo": self.profile_photo,
+            "created_at": self.created_at.isoformat() if self.created_at else None
+        }
 
     # Relationships
     lost_items = db.relationship("LostItem", backref="owner", foreign_keys='LostItem.user_id')
@@ -54,8 +65,6 @@ class LostItem(db.Model):
 
 
 # ---------------------
-# FoundItem Model
-# ---------------------
 class FoundItem(db.Model):
     __tablename__ = 'found_items'
 
@@ -71,9 +80,7 @@ class FoundItem(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     # Relationships
-    claims = db.relationship('Claim', backref='found_item')
-    reward = db.relationship('Reward', backref='found_item', uselist=False)
-    comments = db.relationship("Comment", backref="found_item")
+    reward = db.relationship("Reward", back_populates="found_item", uselist=False)
 
 
 # ---------------------
@@ -97,9 +104,16 @@ class Claim(db.Model):
 # ---------------------
 class Reward(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    item_id = db.Column(db.Integer, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    
+    # This is the missing part:
+    item_id = db.Column(db.Integer, db.ForeignKey('found_items.id'), nullable=False)
+
     amount = db.Column(db.Float, nullable=False)
     conditions = db.Column(db.String)
+
+    # Define relationship back to FoundItem
+    found_item = db.relationship('FoundItem', back_populates='reward')
 
     def serialize(self):
         return {
@@ -108,6 +122,7 @@ class Reward(db.Model):
             "amount": self.amount,
             "conditions": self.conditions
         }
+
 
 
 # ---------------------

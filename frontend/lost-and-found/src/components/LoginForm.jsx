@@ -9,17 +9,19 @@ const LoginForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
-      const res = await axios.post("http://127.0.0.1:5000/login", { email, password });
+      const res = await axios.post("http://localhost:5000/login", { email, password });
 
-      // ✅ Store both token and user info
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("user", JSON.stringify({ email: res.data.email }));
-
-      navigate("/profile"); // or navigate("/") to go to homepage
+      if (res.data && res.data.user) {
+        localStorage.setItem("user", JSON.stringify(res.data.user));
+        navigate("/profile");
+      } else {
+        alert("Login response malformed.");
+      }
     } catch (err) {
-      console.error(err);
-      alert("Invalid credentials");
+      console.error("Login error:", err.response?.data || err.message);
+      alert("Invalid credentials. Please try again.");
     }
   };
 

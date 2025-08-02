@@ -130,7 +130,7 @@ const ItemDiscovery = () => {
                                         : "https://via.placeholder.com/300x200.png?text=No+Image"
                                 }
                                 alt={item.title || "Item"}
-                                className="w-full h-40 object-cover rounded mb-2"
+                                className="w-full h-20 object-cover rounded mb-2"
                             />
                             <h3 className="text-lg font-semibold">{item.title || "Untitled Item"}</h3>
                             <p className="text-sm text-gray-600">{item.description || "No description provided."}</p>

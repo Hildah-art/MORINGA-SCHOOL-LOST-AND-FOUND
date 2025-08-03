@@ -1,9 +1,6 @@
 from flask import Blueprint
 from flask_restful import Api
 from app.controllers.api_endpoints import (
-    Register,
-    Login,
-    Profile,
     LostItemReport,
     FoundItemReport,
     LostItemDetail,
@@ -11,6 +8,7 @@ from app.controllers.api_endpoints import (
     TestAPI,
     AllUsers,
 )
+from app.controllers.auth import Register, Login, Profile
 
 
 auth_bp = Blueprint("auth", __name__)

@@ -1,14 +1,14 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Layout from './components/Layout';
-import Dashboard from './pages/Dashboard';
-import ApproveItems from './pages/ApproveItems'
-import AddItems from './pages/AddItems';
-import ManageUsers from './pages/ManageUsers';
-import PaymentHistory from './pages/PaymentHistory';
-import ResolveDisputes from './pages/ResolveDisputes';
-import Notifications from './pages/Notifications';
-import Reports from './pages/Reports';
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Layout from "./components/Layout";
+import Dashboard from "./pages/Dashboard";
+import ApproveItems from "./pages/ApproveItems";
+import AddItems from "./pages/AddItems";
+import ManageUsers from "./pages/ManageUsers";
+import PaymentHistory from "./pages/PaymentHistory";
+import ResolveDisputes from "./pages/ResolveDisputes";
+import Notifications from "./pages/Notifications";
+import Reports from "./pages/Reports";
 
 function App() {
   return (

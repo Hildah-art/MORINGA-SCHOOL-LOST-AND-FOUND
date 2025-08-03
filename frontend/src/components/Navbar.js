@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   AppBar,
   Toolbar,
@@ -10,14 +10,15 @@ import {
   Menu,
   MenuItem,
   Divider,
-  ListItemIcon
-} from '@mui/material';
+  ListItemIcon,
+} from "@mui/material";
 import {
   Menu as MenuIcon,
   Notifications as NotificationsIcon,
   Logout as LogoutIcon,
-  Settings as SettingsIcon
-} from '@mui/icons-material';
+  Settings as SettingsIcon,
+} from "@mui/icons-material";
+import { useNavigate, Navigate } from "react-router-dom";
 
 const Navbar = () => {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -27,8 +28,21 @@ const Navbar = () => {
     setAnchorEl(event.currentTarget);
   };
 
+  const navigate = useNavigate();
+
+  const handleProfile = () => {
+    navigate("/profile", { replace: true });
+  };
+
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("access_token");
+    localStorage.setItem("access_token", "");
+    console.log("User logged out");
+    navigate("/login", { replace: true });
   };
 
   return (
@@ -37,10 +51,10 @@ const Navbar = () => {
       sx={{
         zIndex: (theme) => theme.zIndex.drawer + 1,
         // The background is now green and the text is white
-        backgroundColor: '#1B5E20',
-        color: 'common.white',
-        boxShadow: 'none',
-        borderBottom: (theme) => `1px solid ${theme.palette.divider}`
+        backgroundColor: "#1B5E20",
+        color: "common.white",
+        boxShadow: "none",
+        borderBottom: (theme) => `1px solid ${theme.palette.divider}`,
       }}
     >
       <Toolbar>
@@ -56,8 +70,8 @@ const Navbar = () => {
           Lost & Found Admin Panel
         </Typography>
 
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <IconButton color="inherit"> 
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <IconButton color="inherit">
             <Badge badgeContent={4} color="error">
               <NotificationsIcon />
             </Badge>
@@ -67,9 +81,9 @@ const Navbar = () => {
             onClick={handleClick}
             size="small"
             sx={{ ml: 2 }}
-            aria-controls={open ? 'account-menu' : undefined}
+            aria-controls={open ? "account-menu" : undefined}
             aria-haspopup="true"
-            aria-expanded={open ? 'true' : undefined}
+            aria-expanded={open ? "true" : undefined}
           >
             <Avatar sx={{ width: 32, height: 32 }}>A</Avatar>
           </IconButton>
@@ -84,36 +98,36 @@ const Navbar = () => {
           PaperProps={{
             elevation: 0,
             sx: {
-              overflow: 'visible',
-              filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+              overflow: "visible",
+              filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
               mt: 1.5,
-              '& .MuiAvatar-root': {
+              "& .MuiAvatar-root": {
                 width: 32,
                 height: 32,
                 ml: -0.5,
                 mr: 1,
               },
-              '&:before': {
+              "&:before": {
                 content: '""',
-                display: 'block',
-                position: 'absolute',
+                display: "block",
+                position: "absolute",
                 top: 0,
                 right: 14,
                 width: 10,
                 height: 10,
-                bgcolor: 'background.paper',
-                transform: 'translateY(-50%) rotate(45deg)',
+                bgcolor: "background.paper",
+                transform: "translateY(-50%) rotate(45deg)",
                 zIndex: 0,
               },
             },
           }}
-          transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-          anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+          transformOrigin={{ horizontal: "right", vertical: "top" }}
+          anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
         >
-          <MenuItem onClick={handleClose}>
+          <MenuItem onClick={handleProfile}>
             <Avatar /> Profile
           </MenuItem>
-          <MenuItem onClick={handleClose}>
+          <MenuItem onClick={handleProfile}>
             <Avatar /> My account
           </MenuItem>
           <Divider />
@@ -123,11 +137,11 @@ const Navbar = () => {
             </ListItemIcon>
             Settings
           </MenuItem>
-          <MenuItem onClick={handleClose}>
+          <MenuItem onClick={handleLogout}>
             <ListItemIcon>
               <LogoutIcon fontSize="small" />
             </ListItemIcon>
-            Logout
+            {localStorage.getItem("access_token") !== "" ? "Logout" : "Login"}
           </MenuItem>
         </Menu>
       </Toolbar>

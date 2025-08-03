@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { Box, Grid, Paper, Typography } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Box, Grid, Paper, Typography, CircularProgress } from "@mui/material";
 import { Bar, Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -26,84 +26,137 @@ ChartJS.register(
 );
 
 const Dashboard = () => {
-  // Sample data
-  const stats = [
-    { title: "Lost Items", value: 24, change: "+12%" },
-    { title: "Found Items", value: 42, change: "+5%" },
-    { title: "Active Users", value: 156, change: "+8%" },
-    { title: "Resolved Cases", value: 89, change: "+3%" },
-  ];
+  const [stats, setStats] = useState([]);
+  const [trendData, setTrendData] = useState(null);
+  const [userActivityData, setUserActivityData] = useState(null);
+  const [apiStat, setApiStat] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const trendData = {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-    datasets: [
-      {
-        label: "Lost Items",
-        data: [12, 19, 15, 22, 18, 24],
-        borderColor: "rgb(255, 99, 132)",
-        backgroundColor: "rgba(255, 99, 132, 0.5)",
-      },
-      {
-        label: "Found Items",
-        data: [20, 25, 30, 35, 40, 42],
-        borderColor: "rgb(53, 162, 235)",
-        backgroundColor: "rgba(53, 162, 235, 0.5)",
-      },
-    ],
-  };
-
-  const userActivityData = {
-    labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-    datasets: [
-      {
-        label: "Active Users",
-        data: [120, 140, 130, 150, 160, 140, 156],
-        backgroundColor: "rgba(75, 192, 192, 0.2)",
-        borderColor: "rgba(75, 192, 192, 1)",
-        borderWidth: 1,
-      },
-    ],
-  };
-
-  const testAPI = async () => {
+  const fetchData = async () => {
     try {
-      const response = await api.ping();
-      console.log("API is reachable:", response);
-      return response;
-    } catch (error) {
-      console.error("API test failed:", error.message || error);
-      return null;
+      const [lostRes, foundRes, userRes] = await Promise.all([
+        api.getLostItems(),
+        api.getFoundItems(),
+        api.getAllUsers(),
+      ]);
+
+      const lostItems = lostRes.items || lostRes || [];
+      const foundItems = foundRes.items || foundRes || [];
+      const users = userRes || [];
+
+      const resolvedLost = lostItems.filter((item) => item.status !== "LOST");
+
+      setStats([
+        {
+          title: "Lost Items",
+          value: lostItems.length,
+          change: "+12%", // Placeholder
+        },
+        {
+          title: "Found Items",
+          value: foundItems.length,
+          change: "+8%",
+        },
+        {
+          title: "Active Users",
+          value: users.filter((u) => u.active).length,
+          change: "+5%",
+        },
+        {
+          title: "Resolved Cases",
+          value: resolvedLost.length,
+          change: "+3%",
+        },
+      ]);
+
+      // Optional dummy trends
+      setTrendData({
+        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+        datasets: [
+          {
+            label: "Lost Items",
+            data: [12, 18, 15, 20, 19, 24],
+            borderColor: "rgb(255, 99, 132)",
+            backgroundColor: "rgba(255, 99, 132, 0.5)",
+          },
+          {
+            label: "Found Items",
+            data: [10, 12, 17, 25, 22, 28],
+            borderColor: "rgb(53, 162, 235)",
+            backgroundColor: "rgba(53, 162, 235, 0.5)",
+          },
+        ],
+      });
+
+      setUserActivityData({
+        labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+        datasets: [
+          {
+            label: "Active Users",
+            data: [120, 140, 130, 150, 160, 140, 156],
+            backgroundColor: "rgba(75, 192, 192, 0.2)",
+            borderColor: "rgba(75, 192, 192, 1)",
+            borderWidth: 1,
+          },
+        ],
+      });
+    } catch (err) {
+      console.error(err);
+      setError("Failed to fetch dashboard data.");
+    } finally {
+      setLoading(false);
     }
   };
-  
+
+  const checkApiStatus = async () => {
+    try {
+      await api.ping();
+      setApiStat(true);
+    } catch (err) {
+      setApiStat(false);
+    }
+  };
+
   useEffect(() => {
-    testAPI();
+    checkApiStatus();
+    fetchData();
   }, []);
 
+  if (loading) return <CircularProgress />;
+  if (error) return <Typography color="error">{error}</Typography>;
+
   return (
-    <>
-      <Box>
-        <Typography variant="h4" gutterBottom>
-          Dashboard Overview
-        </Typography>
+    <Box>
+      <Typography
+        color={apiStat ? "success.main" : "error.main"}
+        sx={{ mb: 2 }}
+      >
+        API Status: {apiStat ? "Connected" : "Disconnected"}
+      </Typography>
 
-        <Grid container spacing={3}>
-          {stats.map((stat, index) => (
-            <Grid item xs={12} sm={6} md={3} key={index}>
-              <Paper sx={{ p: 2 }}>
-                <Typography variant="h6">{stat.title}</Typography>
-                <Typography variant="h4">{stat.value}</Typography>
-                <Typography
-                  color={
-                    stat.change.startsWith("+") ? "success.main" : "error.main"
-                  }
-                >
-                  {stat.change} from last month
-                </Typography>
-              </Paper>
-            </Grid>
-          ))}
+      <Typography variant="h4" gutterBottom>
+        Dashboard Overview
+      </Typography>
 
+      <Grid container spacing={3}>
+        {stats.map((stat, index) => (
+          <Grid item xs={12} sm={6} md={3} key={index}>
+            <Paper sx={{ p: 2 }}>
+              <Typography variant="h6">{stat.title}</Typography>
+              <Typography variant="h4">{stat.value}</Typography>
+              <Typography
+                color={
+                  stat.change.startsWith("+") ? "success.main" : "error.main"
+                }
+              >
+                {stat.change} from last month
+              </Typography>
+            </Paper>
+          </Grid>
+        ))}
+
+        {trendData && (
           <Grid item xs={12} md={6}>
             <Paper sx={{ p: 2 }}>
               <Typography variant="h6" gutterBottom>
@@ -112,7 +165,9 @@ const Dashboard = () => {
               <Line data={trendData} />
             </Paper>
           </Grid>
+        )}
 
+        {userActivityData && (
           <Grid item xs={12} md={6}>
             <Paper sx={{ p: 2 }}>
               <Typography variant="h6" gutterBottom>
@@ -121,9 +176,9 @@ const Dashboard = () => {
               <Bar data={userActivityData} />
             </Paper>
           </Grid>
-        </Grid>
-      </Box>
-    </>
+        )}
+      </Grid>
+    </Box>
   );
 };
 

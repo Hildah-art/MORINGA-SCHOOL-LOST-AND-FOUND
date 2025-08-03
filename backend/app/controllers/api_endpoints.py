@@ -249,6 +249,23 @@ class FoundItemReport(Resource):
             "item": found_item_schema.dump(item),
         }, 201
 
+    def get(self):
+        pagination = FoundItem.query.paginate(
+            page=request.args.get("page", 1, type=int),
+            per_page=request.args.get("per_page", 10, type=int),
+            error_out=False,
+        )
+
+        items = pagination.items
+
+        return {
+            "items": found_items_schema.dump(items),
+            "page": pagination.page,
+            "per_page": pagination.per_page,
+            "total": pagination.total,
+            "pages": pagination.pages,
+        }, 200
+
 
 class ItemList(Resource):
     def get(self):

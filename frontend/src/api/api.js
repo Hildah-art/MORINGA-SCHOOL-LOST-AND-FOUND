@@ -45,6 +45,7 @@ export const api = {
 
   getLostItems: () => request("GET", "/lost"),
   getSingleLostItem: (id) => request("GET", `/lost/${id}`),
+
   reportLostItem: (formData) => {
     return fetch(`${BASE_URL}/lost`, {
       method: "POST",
@@ -59,6 +60,7 @@ export const api = {
   },
 
   reportFoundItem: (data) => request("POST", "/found", data),
+  getFoundItems: () => request("GET", "/found"),
 
   ping: () => request("GET", "/test"),
 };

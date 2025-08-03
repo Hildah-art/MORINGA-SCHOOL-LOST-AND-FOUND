@@ -18,7 +18,7 @@ import {
   Logout as LogoutIcon,
   Settings as SettingsIcon,
 } from "@mui/icons-material";
-import { useNavigate, Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const [anchorEl, setAnchorEl] = React.useState(null);

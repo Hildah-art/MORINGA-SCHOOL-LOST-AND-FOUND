@@ -16,7 +16,10 @@ source .env # to load the environment variables
 flask db migrate # to create the database migrations
 flask db upgrade # to apply the migrations to the database
 
+python seed.py # to seed the database with initial data
+
 flask run --debug # to start the Flask server
+
 ```
 
 Test the API by calling a sample test endpoint:

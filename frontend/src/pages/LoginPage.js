@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { TextField, Button, Box, Typography, Paper } from "@mui/material";
 import { api } from "../api/api";
-import { NavLink } from "react-router";
+import { useNavigate } from "react-router-dom";
 
 const LoginPage = ({ onLogin }) => {
   const [form, setForm] = useState({ email: "", password: "" });
@@ -10,7 +10,7 @@ const LoginPage = ({ onLogin }) => {
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
-
+  const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -18,15 +18,7 @@ const LoginPage = ({ onLogin }) => {
       await api.login(form);
       if (onLogin) onLogin();
       setSuccess("Login successful!");
-      <NavLink
-        to="/dashboard"
-        style={({ isActive }) => ({
-          fontWeight: isActive ? "bold" : "normal",
-          color: isActive ? "#1976d2" : "#000",
-        })}
-      >
-        Dashboard
-      </NavLink>;
+      navigate("/manage-users", { replace: true });
     } catch (err) {
       console.error(err);
       setError("Invalid credentials");

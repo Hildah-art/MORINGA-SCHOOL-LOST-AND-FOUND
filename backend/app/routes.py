@@ -8,7 +8,13 @@ from app.controllers.api_endpoints import (
     TestAPI,
     AllUsers,
 )
-from app.controllers.auth import Register, Login, Profile
+from app.controllers.auth import (
+    Register,
+    Login,
+    Profile,
+    ResetPassword,
+    ResetPasswordConfirm,
+)
 
 
 auth_bp = Blueprint("auth", __name__)
@@ -18,7 +24,8 @@ auth_api.add_resource(Register, "/register")
 auth_api.add_resource(Login, "/login")
 auth_api.add_resource(Profile, "/profile")
 auth_api.add_resource(AllUsers, "/users")
-
+auth_api.add_resource(ResetPassword, "/reset-password")
+auth_api.add_resource(ResetPasswordConfirm, "/reset-password/confirm")
 
 items_bp = Blueprint("items", __name__)
 items_api = Api(items_bp)

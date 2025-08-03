@@ -1,37 +1,69 @@
-import React, { useState } from 'react';
-import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TextField, IconButton } from '@mui/material';
-import { Edit, Delete, Search } from '@mui/icons-material';
-import { Button } from '@mui/material';
+import React, { useEffect, useState } from "react";
+import {
+  Box,
+  Typography,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  TextField,
+  IconButton,
+  Button,
+} from "@mui/material";
+import { Edit, Delete, Search } from "@mui/icons-material";
+import { api } from "../api/api";
 
 const ManageUsers = () => {
-  const [users, setUsers] = useState([
-    { id: 1, name: 'John Doe', email: 'john@example.com', role: 'user', status: 'active' },
-    { id: 2, name: 'Jane Smith', email: 'jane@example.com', role: 'admin', status: 'active' },
-    { id: 3, name: 'Bob Johnson', email: 'bob@example.com', role: 'user', status: 'inactive' },
-  ]);
+  const [users, setUsers] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const [searchTerm, setSearchTerm] = useState('');
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const res = await api.getAllUsers();
+        console.log(res);
+        setUsers(res);
+      } catch (err) {
+        setError("Failed to load users");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUsers();
+  }, []);
 
   const handleDelete = (id) => {
-    setUsers(users.filter(user => user.id !== id));
+    setUsers(users.filter((user) => user.id !== id));
   };
 
   const handleStatusChange = (id) => {
-    setUsers(users.map(user => 
-      user.id === id ? { ...user, status: user.status === 'active' ? 'inactive' : 'active' } : user
-    ));
+    setUsers(
+      users.map((user) =>
+        user.id === id ? { ...user, active: !user.active } : user
+      )
+    );
   };
 
-  const filteredUsers = users.filter(user => 
-    user.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    user.email.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredUsers = users.filter(
+    (user) =>
+      user.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
     <Box>
-      <Typography variant="h4" gutterBottom>Manage User Accounts</Typography>
-      
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+      <Typography variant="h4" gutterBottom>
+        Manage User Accounts
+      </Typography>
+
+      <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
         <TextField
           label="Search Users"
           variant="outlined"
@@ -43,47 +75,56 @@ const ManageUsers = () => {
           }}
         />
       </Box>
-      
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>Role</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {filteredUsers.map((user) => (
-              <TableRow key={user.id}>
-                <TableCell>{user.name}</TableCell>
-                <TableCell>{user.email}</TableCell>
-                <TableCell>{user.role}</TableCell>
-                <TableCell>
-                  <Button 
-                    variant="outlined" 
-                    color={user.status === 'active' ? 'success' : 'error'}
-                    size="small"
-                    onClick={() => handleStatusChange(user.id)}
-                  >
-                    {user.status}
-                  </Button>
-                </TableCell>
-                <TableCell>
-                  <IconButton color="primary">
-                    <Edit />
-                  </IconButton>
-                  <IconButton color="error" onClick={() => handleDelete(user.id)}>
-                    <Delete />
-                  </IconButton>
-                </TableCell>
+
+      {loading ? (
+        <Typography>Loading users...</Typography>
+      ) : error ? (
+        <Typography color="error">{error}</Typography>
+      ) : (
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Full Name</TableCell>
+                <TableCell>Email</TableCell>
+                <TableCell>Role</TableCell>
+                <TableCell>Status</TableCell>
+                <TableCell>Actions</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </TableHead>
+            <TableBody>
+              {filteredUsers.map((user) => (
+                <TableRow key={user.id}>
+                  <TableCell>{user.full_name}</TableCell>
+                  <TableCell>{user.email}</TableCell>
+                  <TableCell>{user.role}</TableCell>
+                  <TableCell>
+                    <Button
+                      variant="outlined"
+                      color={user.active ? "success" : "error"}
+                      size="small"
+                      onClick={() => handleStatusChange(user.id)}
+                    >
+                      {user.active ? "active" : "inactive"}
+                    </Button>
+                  </TableCell>
+                  <TableCell>
+                    <IconButton color="primary">
+                      <Edit />
+                    </IconButton>
+                    <IconButton
+                      color="error"
+                      onClick={() => handleDelete(user.id)}
+                    >
+                      <Delete />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
     </Box>
   );
 };

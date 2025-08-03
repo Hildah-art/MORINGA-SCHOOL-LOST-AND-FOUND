@@ -139,10 +139,12 @@ class ResetPassword(Resource):
 
         try:
             resend.Emails.send(
-                "to"=email,
-                "from": "Lost and Found <no-reply@lostandfound.com>",
-                "subject": "Password Reset",
-                "html": f"<p>Click <a href='{reset_link}'>here</a> to reset your password. This link expires in 30 minutes.</p>",
+                {
+                    "to": f"{user.full_name} <{user.email}>",
+                    "from": "Lost and Found <no-reply@lostandfound.com>",
+                    "subject": "Password Reset",
+                    "html": f"<p>Click <a href='{reset_link}'>here</a> to reset your password. This link expires in 30 minutes.</p>",
+                }
             )
         except Exception as e:
             return {"message": f"Failed to send email: {e}"}, 500

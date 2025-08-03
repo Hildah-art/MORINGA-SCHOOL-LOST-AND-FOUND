@@ -1,35 +1,62 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React from 'react';
+import { Routes, Route } from 'react-router-dom';
+import LandingPage from './components/LandingPage';
+import NavBar from './components/NavBar';
+import Layout from './components/Layout';
+
+import ChatWindow from './components/chatwindow';
+import ClaimVerification from './components/claimverification';
+import LoginForm from './components/LoginForm';
+import OfferReward from './components/offerReward';
+import ReportLostItem from './components/ReportLostItem';
+import PostItem from './components/PostItem';
+import ItemDiscovery from './components/ItemDiscovery';
+
+import Dashboard from './pages/Dashboard';
+import ApproveItems from './pages/ApproveItems';
+import AddItems from './pages/AddItems';
+import ManageUsers from './pages/ManageUsers';
+import PaymentHistory from './pages/PaymentHistory';
+import ResolveDisputes from './pages/ResolveDisputes';
+import Notifications from './pages/Notifications';
+import Reports from './pages/Reports';
+import Signup from './components/SignUp';
+
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <NavBar />
+      <Layout>
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/approve-items" element={<ApproveItems />} />
+          <Route path="/add-items" element={<AddItems />} />
+          <Route path="/manage-users" element={<ManageUsers />} />
+          <Route path="/payment-history" element={<PaymentHistory />} />
+          <Route path="/resolve-disputes" element={<ResolveDisputes />} />
+          <Route path="/notifications" element={<Notifications />} />
+          <Route path="/reports" element={<Reports />} />
+          <Route path="/login" element={<LoginForm />} />
+          <Route path="/report-lost-item" element={<ReportLostItem />} />
+          <Route path="/claim-verification" element={<ClaimVerification />} />
+          <Route 
+        
+            path="/offer-reward"
+            element={
+              <OfferReward
+                onSubmit={(reward) => console.log("Submitted reward:", reward)}
+              />
+            }
+          />
+          <Route path="/chat" element={<ChatWindow />} />
+          <Route path="/post-item" element={<PostItem />} />
+          <Route path="/discover-items" element={<ItemDiscovery />} />
+        </Routes>
+      </Layout>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

@@ -1,70 +1,126 @@
-# Getting Started with Create React App
+## Moringa Lost and Found Platform
+A full-stack web application that allows users to report and discover lost or found items. Users must sign up or log in to interact with the system, enabling authenticated access to submit reports, view items, and manage their profiles.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Features
+User authentication (Signup / Login)
 
-## Available Scripts
+Report lost or found items (with image upload)
 
-In the project directory, you can run:
+View discovered items
 
-### `npm start`
+Secure form handling
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+RESTful API backend
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Image upload support (e.g., profile pics, item images)
 
-### `npm test`
+Persistent data storage (e.g., SQLite/PostgreSQL)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Clear separation of frontend and backend responsibilities
 
-### `npm run build`
+## Tech Stack
+Frontend
+React.js
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+React Router DOM
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Axios
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+HTML/CSS
 
-### `npm run eject`
+Backend
+Flask (Python)
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Flask-CORS
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Flask-SQLAlchemy
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+Flask-Migrate
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+Werkzeug (for password hashing)
 
-## Learn More
+SQLite / PostgreSQL (depending on environment)
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Setup Instructions
+## Backend Setup
+Clone the repo
+git clone 
+cd lost-and-found-platform/backend
+Create a virtual environment
+pipenv install $ pipenv shell
 
-To learn React, check out the [React documentation](https://reactjs.org/).
 
-### Code Splitting
+flask db init
+flask db migrate
+flask db upgrade
+Start the server
+flask run
+Server runs on: http://localhost:5000
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## Frontend Setup
+Navigate to frontend
 
-### Analyzing the Bundle Size
+cd ../frontend/lost-and-found
+Install dependencies
+npm install
+Run development server
+npm run dev
+App will be available at: http://localhost:5173
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## Project Structure
+MORINGA-SCHOOL-LOST-AND-FOUND/
+├── backend/
+│   └── lost_and_found/
+│       ├── __init__.py
+│       ├── app.py                # Main Flask application entry point
+│       ├── config.py             # Configuration (CORS, DB, secret keys)
+│       ├── controllers/
+│       │   └── __init__.py       # Controller logic for routes
+│       ├── models.py             # SQLAlchemy models
+│       ├── routes.py             # All route definitions
+│       ├── utils.py              # Helper/utility functions
+│       └── static/
+│           └── uploads/          # Uploaded images for items
+│               └── [...images]
+│
+└── frontend/
+    └── lost-and-found/
+        └── src/
+            ├── App.jsx
+            ├── App.css
+            ├── main.jsx
+            ├── index.css
+            ├── Styles/
+            │   └── index.css     # Custom styling
+            ├── assets/
+            │   ├── react.svg
+            │   └── postingItem.webp
+            ├── components/
+            │   ├── NavBar.jsx
+            │   ├── Layout.jsx
+            │   ├── LoginForm.jsx
+            │   ├── SignUp.jsx
+            │   ├── ReportLostItem.jsx
+            │   ├── PostItem.jsx
+            │   ├── ItemDiscovery.jsx
+            │   ├── LandingPage.jsx
+            │   ├── PrivateRoute.jsx
+            │   ├── Profile.jsx
+            │   ├── sidebar.jsx
+            │   ├── chatwindow.jsx
+            │   ├── offerReward.jsx
+            │   └── claimverification.jsx
+            └── pages/
+                ├── AddItems.jsx
+                ├── ApproveItems.jsx
+                ├── Dashboard.jsx
+                ├── ManageUsers.jsx
+                ├── Notifications.jsx
+                ├── PaymentHistory.jsx
+                ├── Reports.jsx
+                └── ResolveDisputes.jsx
 
-### Making a Progressive Web App
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
 
-### Advanced Configuration
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
 
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)

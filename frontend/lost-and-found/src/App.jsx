@@ -39,7 +39,7 @@ function App() {
           <Route path="/login" element={<LoginForm />} />
 
           <Route path="/report-lost-item" element={<ReportLostItem />} />
-          <Route path="/claim-verification" element={<ClaimVerification />} />
+          <Route path="/claim/:id" element={<ClaimVerification />} />
           <Route path="/offer-reward" element={<OfferReward onSubmit={(reward) => console.log("Submitted reward:", reward)} />} />
           <Route path="/chat" element={<ChatWindow />} />
           <Route path="/post-item" element={<PostItem />} />
@@ -54,7 +54,6 @@ function App() {
           {/* Admin or dashboard pages */}
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/approve-items" element={<ApproveItems />} />
-          <Route path="/add-items" element={<AddItems />} />
           <Route path="/manage-users" element={<ManageUsers />} />
           <Route path="/payment-history" element={<PaymentHistory />} />
           <Route path="/resolve-disputes" element={<ResolveDisputes />} />

@@ -1,7 +1,7 @@
 import { useState } from 'react';
+import axios from 'axios';
 
-
-function ClaimVerification() {
+function ClaimVerification({ itemId, userId }) {
   const [answers, setAnswers] = useState({
     item: '',
     whenLost: '',
@@ -17,14 +17,33 @@ function ClaimVerification() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitted(true);
+
+    const formData = new FormData();
+    formData.append("item_id", itemId);
+    formData.append("claimant_id", userId);
+    formData.append("questionnaire_answers", `Item: ${answers.item}, Lost: ${answers.whenLost}`);
+    if (answers.proofFile) {
+      formData.append("proof_document", answers.proofFile);
+    }
+
+    try {
+      await axios.post("http://localhost:5000/claims", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data"
+        }
+      });
+      setSubmitted(true);
+    } catch (error) {
+      console.error("Error submitting claim:", error);
+      alert("Claim submission failed.");
+    }
   };
 
   return (
     <div className="claim-verification">
-      <h2> Claim Verification</h2>
+      <h2>Claim Verification</h2>
       <form onSubmit={handleSubmit}>
         <label>
           What item are you claiming?
@@ -55,12 +74,14 @@ function ClaimVerification() {
             onChange={handleChange}
           />
         </label>
-        <button type="submit">Submit Claim</button>
+        <button type="submit" disabled={submitted}>
+          {submitted ? "Submitted" : "Submit Claim"}
+        </button>
       </form>
 
       {submitted && (
         <div className="confirmation">
-          ✅ Claim submitted. Await verification.
+          Claim submitted. Await verification.
         </div>
       )}
     </div>

@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import "../Styles/index.css";
 
-const API_BASE = "http://localhost:5000"; 
+const API_BASE = "http://localhost:5000";
 
 const ItemDiscovery = () => {
     const [items, setItems] = useState([]);
@@ -14,6 +16,8 @@ const ItemDiscovery = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
+    const navigate = useNavigate();
+
     const fetchItems = async () => {
         setLoading(true);
         setError("");
@@ -24,15 +28,7 @@ const ItemDiscovery = () => {
 
         try {
             const response = await axios.get(`${API_BASE}${endpoint}`, {
-                params: {
-                    search,
-                    category,
-                    urgency,
-                    date,
-                    location,
-
-
-                },
+                params: { search, category, urgency, date, location },
             });
 
             const data = response.data;
@@ -60,25 +56,17 @@ const ItemDiscovery = () => {
     };
 
     return (
-        <div className="p-6 max-w-7xl mx-auto">
-            <h2 className="text-2xl font-bold mb-4">🔍 Discover Items</h2>
+        <div style={{ padding: "24px", maxWidth: "1200px", margin: "0 auto" }}>
+            <h2 style={{ fontSize: "24px", fontWeight: "bold", marginBottom: "16px" }}>Discover Items</h2>
 
-            <form onSubmit={handleSearch} className="mb-4 grid gap-2 md:grid-cols-3 lg:grid-cols-4">
-                <input
-                    type="text"
-                    placeholder="Search items..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    className="p-2 border rounded"
-                />
-
-                <select value={filter} onChange={(e) => setFilter(e.target.value)} className="p-2 border rounded">
+            <form onSubmit={handleSearch} style={{ marginBottom: "24px", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "12px" }}>
+                <input type="text" placeholder="Search items..." value={search} onChange={(e) => setSearch(e.target.value)} style={{ padding: "8px", border: "1px solid #ccc", borderRadius: "4px" }} />
+                <select value={filter} onChange={(e) => setFilter(e.target.value)} style={{ padding: "8px", border: "1px solid #ccc", borderRadius: "4px" }}>
                     <option value="all">All Items</option>
                     <option value="lost">Lost Items</option>
                     <option value="found">Found Items</option>
                 </select>
-
-                <select value={category} onChange={(e) => setCategory(e.target.value)} className="p-2 border rounded">
+                <select value={category} onChange={(e) => setCategory(e.target.value)} style={{ padding: "8px", border: "1px solid #ccc", borderRadius: "4px" }}>
                     <option value="">All Categories</option>
                     <option value="electronics">Electronics</option>
                     <option value="clothing">Clothing</option>
@@ -86,58 +74,40 @@ const ItemDiscovery = () => {
                     <option value="accessories">Accessories</option>
                     <option value="other">Other</option>
                 </select>
-
-                <select value={urgency} onChange={(e) => setUrgency(e.target.value)} className="p-2 border rounded">
+                <select value={urgency} onChange={(e) => setUrgency(e.target.value)} style={{ padding: "8px", border: "1px solid #ccc", borderRadius: "4px" }}>
                     <option value="">All Urgencies</option>
                     <option value="low">Low</option>
                     <option value="moderate">Moderate</option>
                     <option value="high">High</option>
                 </select>
-
-                <input
-                    type="date"
-                    value={date}
-                    onChange={(e) => setDate(e.target.value)}
-                    className="p-2 border rounded"
-                />
-
-                <input
-                    type="text"
-                    placeholder="Location"
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                    className="p-2 border rounded"
-                />
-
-                <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 col-span-1">
-                     Search
-                </button>
+                <input type="date" value={date} onChange={(e) => setDate(e.target.value)} style={{ padding: "8px", border: "1px solid #ccc", borderRadius: "4px" }} />
+                <input type="text" placeholder="Location" value={location} onChange={(e) => setLocation(e.target.value)} style={{ padding: "8px", border: "1px solid #ccc", borderRadius: "4px" }} />
+                <button type="submit" style={{ backgroundColor: "#2563eb", color: "white", padding: "8px 16px", borderRadius: "4px", border: "none", cursor: "pointer" }}>Search</button>
             </form>
 
-            {loading && <p className="text-gray-500">Loading items...</p>}
-            {error && <p className="text-red-500">{error}</p>}
+            {loading && <p style={{ color: "#6b7280" }}>Loading items...</p>}
+            {error && <p style={{ color: "#ef4444" }}>{error}</p>}
 
-            <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "24px" }}>
                 {items.length === 0 && !loading ? (
-                    <p className="col-span-full text-gray-500 text-center">No items found.</p>
+                    <p style={{ gridColumn: "1 / -1", textAlign: "center", color: "#6b7280" }}>No items found.</p>
                 ) : (
                     items.map((item) => (
-                        <div key={`${item.type}-${item.id}`} className="border p-4 rounded shadow bg-white">
-                            <img
-                                src={
-                                    item.image_url
-                                        ? item.image_url
-                                        : "https://via.placeholder.com/300x200.png?text=No+Image"
-                                }
-                                alt={item.title || "Item"}
-                                className="w-full h-20 object-cover rounded mb-2"
-                            />
-                            <h3 className="text-lg font-semibold">{item.title || "Untitled Item"}</h3>
-                            <p className="text-sm text-gray-600">{item.description || "No description provided."}</p>
-                            <p className="text-sm"> <strong>Category:</strong> {item.category || "N/A"}</p>
-                            <p className="text-sm"> <strong>Urgency:</strong> {item.urgency || "N/A"}</p>
-                            <p className="text-sm"><strong>Location:</strong> {item.location || "N/A"}</p>
-                            <p className="text-sm"> <strong>Date:</strong> {item.date?.slice(0, 10) || "N/A"}</p>
+                        <div key={`${item.type}-${item.id}`} style={{ backgroundColor: "#fff", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "16px", textAlign: "center", boxShadow: "0 2px 8px rgba(0, 0, 0, 0.05)" }}>
+                            <img src={item.image_url || "https://via.placeholder.com/150.png?text=No+Image"} alt={item.title || "Item"} style={{ width: "150px", height: "150px", objectFit: "cover", borderRadius: "4px", backgroundColor: "white", marginBottom: "12px" }} />
+                            <h3 style={{ fontSize: "1rem", fontWeight: "600", marginBottom: "8px" }}>{item.title || "Untitled Item"}</h3>
+                            <p style={{ fontSize: "0.9rem", margin: "4px 0" }}>{item.description || "No description provided."}</p>
+                            <p style={{ fontSize: "0.85rem", margin: "4px 0" }}><strong>Category:</strong> {item.category || "N/A"}</p>
+                            <p style={{ fontSize: "0.85rem", margin: "4px 0" }}><strong>Urgency:</strong> {item.urgency || "N/A"}</p>
+                            <p style={{ fontSize: "0.85rem", margin: "4px 0" }}><strong>Location:</strong> {item.location || "N/A"}</p>
+                            <p style={{ fontSize: "0.85rem", margin: "4px 0" }}><strong>Date:</strong> {item.date?.slice(0, 10) || "N/A"}</p>
+
+                            <button
+                                onClick={() => navigate(`/claim/${item.id}`)}
+                                style={{ marginTop: "10px", padding: "6px 12px", borderRadius: "4px", backgroundColor: "#10b981", color: "white", border: "none", cursor: "pointer" }}
+                            >
+                                Claim
+                            </button>
                         </div>
                     ))
                 )}

@@ -1,14 +1,16 @@
 import os
 from flask import Blueprint, request, jsonify, url_for
+from flask import request, jsonify, current_app
+from lost_and_found.app import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.security import check_password_hash
 from .models import db, User, LostItem, FoundItem, Claim, Message, Notification, Reward, Comment
 from datetime import datetime
+from werkzeug.utils import secure_filename
 from flask_jwt_extended import jwt_required, get_jwt_identity, create_access_token
 from flask import render_template
 
 routes = Blueprint('routes', __name__)
-
 
 
 
@@ -128,42 +130,31 @@ def get_all_items():
 
 # -------------------- CLAIMS --------------------
 @routes.route('/claims', methods=['POST'])
-def create_claim():
-    data = request.get_json()
+def submit_claim():
+    item_id = request.form.get('item_id')
+    claimant_id = request.form.get('claimant_id')
+    answers = request.form.get('questionnaire_answers')
+    proof_file = request.files.get('proof_document')
+
+    filename = None
+    if proof_file:
+        filename = secure_filename(proof_file.filename)
+        upload_folder = current_app.config.get("UPLOAD_FOLDER", "static/uploads")
+        os.makedirs(upload_folder, exist_ok=True)  # create folder if missing
+        file_path = os.path.join(upload_folder, filename)
+        proof_file.save(file_path)
 
     claim = Claim(
-        item_id=data['item_id'],
-        claimant_id=data['claimant_id'],
-        questionnaire_answers=data.get('questionnaire_answers'),
-        proof_document=data.get('proof_document'),
-        status=data.get('status', 'Pending')
+        item_id=item_id,
+        claimant_id=claimant_id,
+        questionnaire_answers=answers,
+        proof_document=filename,
     )
     db.session.add(claim)
     db.session.commit()
-    return jsonify({
-        "message": "Claim submitted successfully.",
-        "claim": {
-            "id": claim.id,
-            "item_id": claim.item_id,
-            "claimant_id": claim.claimant_id,
-            "status": claim.status,
-            "submitted_at": claim.submitted_at
-        }
-    }), 201
 
-@routes.route('/claims/<int:claim_id>/status', methods=['PUT'])
-def update_claim_status(claim_id):
-    claim = Claim.query.get_or_404(claim_id)
-    data = request.get_json()
-    claim.status = data['status']
-    db.session.commit()
-    return jsonify({
-        "message": "Claim status updated.",
-        "claim": {
-            "id": claim.id,
-            "status": claim.status
-        }
-    })
+    return jsonify({"message": "Claim submitted successfully", "claim_id": claim.id}), 201
+
 
 # -------------------- NOTIFICATIONS --------------------
 @routes.route('/notifications', methods=['POST'])

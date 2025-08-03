@@ -65,7 +65,7 @@ def create_lost_item():
 # -------------------- FOUND ITEMS --------------------
 @routes.route('/found-items', methods=['POST'])
 def create_found_item():
-    title = request.form.get('title')  # ✅ matches model
+    title = request.form.get('title')  
     location_found = request.form.get('location')  # ✅ matches model
     date_found = request.form.get('date_found')  # Format: YYYY-MM-DD
     description = request.form.get('description')

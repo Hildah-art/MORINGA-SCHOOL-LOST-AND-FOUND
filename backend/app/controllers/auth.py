@@ -50,16 +50,18 @@ class Register(Resource):
             return {"message": "Invalid email format."}, 400
 
         email: str = data.get("email", "")
-        full_name = data.get("full_name", "")
-        role = data.get("role", "")
-        student_staff_id = data.get("student_staff_id")
-        phone = data.get("phone")
-        password = data.get("password")
+        full_name: str = data.get("full_name", "")
+        role: str = data.get("role", "STUDENT")
+        student_staff_id: str = data.get("student_staff_id", "")
+        phone: str = data.get("phone", "")
+        password: str = data.get("password", "")
 
         if not all([email, full_name, role, student_staff_id, phone, password]):
             return {
                 "message": "All fields are required: email, full_name, role, student_staff_id, phone, password"
             }, 400
+        # if role.capitalize() not in ["STUDENT", "STAFF", "ADMIN"]:
+        #     return {"message": "Role must be STUDENT, STAFF, or ADMIN"}, 400
 
         if User.query.filter_by(email=email).first():
             return {"message": "User already exists"}, 400
@@ -67,10 +69,10 @@ class Register(Resource):
         user = User(
             full_name=full_name,
             email=email.lower().strip(),
-            role=role,
+            role=role.strip().upper(),
             student_staff_id=student_staff_id,
             phone=normalize_kenyan_phone(phone),
-            active=False if data["role"] == "Staff" else True,
+            active=False if data["role"] == "STAFF" else True,
         )
         user.set_password(password)
 
@@ -109,7 +111,7 @@ class Login(Resource):
             access_token = create_access_token(
                 identity=user.email,
                 expires_delta=timedelta(days=1),
-                additional_claims={"role": user.role},
+                additional_claims={"role": user.role.value},
             )
             return {"access_token": access_token}, 200
 

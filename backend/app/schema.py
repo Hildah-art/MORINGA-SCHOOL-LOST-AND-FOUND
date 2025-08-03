@@ -12,9 +12,14 @@ class UserSchema(ma.SQLAlchemySchema):
     id = ma.auto_field()
     full_name = ma.auto_field()
     email = ma.auto_field()
-    role = ma.auto_field()
     student_staff_id = ma.auto_field()
     phone = ma.auto_field()
+    role = fields.Function(
+        serialize=lambda obj: obj.role.value if obj.role else None,
+        deserialize=lambda val: val.strip().upper(),
+        required=True,
+        validate=validate.OneOf(["STUDENT", "STAFF", "ADMIN"]),
+    )
     profile_photo = ma.auto_field()
     created_at = ma.auto_field()
     updated_at = ma.auto_field()

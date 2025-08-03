@@ -29,7 +29,7 @@ const ManageUsers = () => {
         console.log(res);
         setUsers(res);
       } catch (err) {
-        setError("Failed to load users");
+        setError(`Failed to load users ${err.message}`);
         console.error(err);
       } finally {
         setLoading(false);
@@ -87,8 +87,12 @@ const ManageUsers = () => {
               <TableRow>
                 <TableCell>Full Name</TableCell>
                 <TableCell>Email</TableCell>
+                <TableCell>Phone</TableCell>
+                <TableCell>Student/Staff ID</TableCell>
                 <TableCell>Role</TableCell>
                 <TableCell>Status</TableCell>
+                <TableCell>Profile Pic</TableCell>
+                <TableCell>Created At</TableCell>
                 <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
@@ -97,6 +101,8 @@ const ManageUsers = () => {
                 <TableRow key={user.id}>
                   <TableCell>{user.full_name}</TableCell>
                   <TableCell>{user.email}</TableCell>
+                  <TableCell>{user.phone}</TableCell>
+                  <TableCell>{user.student_staff_id}</TableCell>
                   <TableCell>{user.role}</TableCell>
                   <TableCell>
                     <Button
@@ -108,6 +114,18 @@ const ManageUsers = () => {
                       {user.active ? "active" : "inactive"}
                     </Button>
                   </TableCell>
+                  <TableCell>
+                    {user.profile_photo ? (
+                      <img
+                        src={user.profile_photo}
+                        alt="Profile"
+                        style={{ width: 50, height: 50, borderRadius: "50%" }}
+                      />
+                    ) : (
+                      "No Image"
+                    )}
+                  </TableCell>
+                  <TableCell>{user.created_at}</TableCell>
                   <TableCell>
                     <IconButton color="primary">
                       <Edit />

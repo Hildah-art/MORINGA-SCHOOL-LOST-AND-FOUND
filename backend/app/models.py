@@ -6,9 +6,9 @@ from sqlalchemy import Enum as PgEnum
 
 
 class UserRole(enum.Enum):
-    ADMIN = "Admin"
-    STUDENT = "Student"
-    STAFF = "Staff"
+    ADMIN = "ADMIN"
+    STUDENT = "STUDENT"
+    STAFF = "STAFF"
 
 
 class UrgencyLevel(enum.Enum):
@@ -59,7 +59,7 @@ class User(db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-    if role == "Staff":
+    if role == "Staff" or role == "STAFF":
         active = db.Column(db.Boolean, default=False)
 
 

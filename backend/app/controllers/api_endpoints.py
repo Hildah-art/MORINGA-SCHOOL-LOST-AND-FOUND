@@ -1,9 +1,11 @@
+import re
 import uuid
 from flask import jsonify, request
 from flask_restful import Resource
 from flask_jwt_extended import jwt_required, create_access_token, get_jwt_identity
 from marshmallow import ValidationError
 from app.models import User, LostItem, FoundItem, UrgencyLevel
+from dateutil.parser import parse as parse_date
 from app.config import db
 from app.schema import UserSchema, LostItemSchema, FoundItemSchema
 from datetime import datetime, timedelta
@@ -20,6 +22,11 @@ UPLOAD_FOLDER = os.path.join("static", "uploads")
 
 def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+def clean_and_parse_date(date_str):
+    cleaned = re.sub(r"GMT[+-]\d{4}.*$", "", date_str).strip()
+    return parse_date(cleaned)
 
 
 user_schema = UserSchema()
@@ -55,9 +62,10 @@ class AllUsers(Resource):
     @jwt_required()
     def get(self):
         user = User.query.filter_by(email=get_jwt_identity()).first()
+        print(user)
         if not user:
             return {"message": "User not found"}, 404
-        if user.role != "Staff":
+        if user.role.value != "STAFF":
             return {"message": "Forbidden Access"}, 403
         users = User.query.all()
         return user_schema.dump(users, many=True), 200
@@ -114,13 +122,12 @@ class LostItemReport(Resource):
                 "message": "Invalid urgency level. Must be one of: Low, Medium, High, Critical."
             }, 400
 
-        # Validate date
         try:
-            date = datetime.strptime(date_str, "%Y-%m-%d")
+            date = clean_and_parse_date(date_str)
             if date > datetime.now():
                 return {"message": "Date cannot be in the future."}, 400
-        except ValueError:
-            return {"message": "Invalid date format. Use YYYY-MM-DD."}, 400
+        except Exception:
+            return {"message": f"Invalid date format: {date_str}"}, 400
 
         # Handle image upload
         image_filename = None

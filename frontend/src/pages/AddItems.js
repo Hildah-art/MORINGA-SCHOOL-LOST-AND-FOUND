@@ -1,54 +1,82 @@
-import React, { useState } from 'react';
-import { Box, Typography, TextField, Button, Paper, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
-import { AddCircle } from '@mui/icons-material';
+import React, { useState } from "react";
+import {
+  Box,
+  Typography,
+  TextField,
+  Button,
+  Paper,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+} from "@mui/material";
+import { AddCircle } from "@mui/icons-material";
+import { api } from "../api/api";
 
 const AddItems = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    category: '',
-    location: '',
-    dateFound: '',
+    description: "",
+    category: "",
+    found_location: "",
+    date: "",
+    image: "", // optional if you add image later
   });
+  const [loading, setLoading] = useState(false);
+  const [successMsg, setSuccessMsg] = useState("");
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Here you would typically send the data to your backend
-    console.log('Item added:', formData);
-    alert('Item added successfully!');
-    setFormData({
-      name: '',
-      description: '',
-      category: '',
-      location: '',
-      dateFound: '',
-    });
+    setLoading(true);
+    setSuccessMsg("");
+    setError("");
+
+    try {
+      await api.reportFoundItem({
+        description: formData.description,
+        category: formData.category,
+        found_location: formData.found_location,
+        date: formData.date,
+        image: formData.image,
+      });
+
+      setSuccessMsg("Item added successfully!");
+      setFormData({
+        description: "",
+        category: "",
+        found_location: "",
+        date: "",
+        image: "",
+      });
+    } catch (err) {
+      console.error(err);
+      setError("Failed to add item. Make sure you are logged in.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <Box>
-      <Typography variant="h4" gutterBottom>Add New Item</Typography>
-      
+      <Typography variant="h4" gutterBottom>
+        Add Found Item
+      </Typography>
+
       <Paper sx={{ p: 3, maxWidth: 600 }}>
         <form onSubmit={handleSubmit}>
-          <TextField
-            label="Item Name"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-            required
-          />
-          
+          {successMsg && (
+            <Typography color="success.main">{successMsg}</Typography>
+          )}
+          {error && <Typography color="error.main">{error}</Typography>}
+
           <TextField
             label="Description"
             name="description"
@@ -60,7 +88,7 @@ const AddItems = () => {
             rows={4}
             required
           />
-          
+
           <FormControl fullWidth margin="normal" required>
             <InputLabel>Category</InputLabel>
             <Select
@@ -76,36 +104,47 @@ const AddItems = () => {
               <MenuItem value="other">Other</MenuItem>
             </Select>
           </FormControl>
-          
+
           <TextField
             label="Location Found"
-            name="location"
-            value={formData.location}
+            name="found_location"
+            value={formData.found_location}
             onChange={handleChange}
             fullWidth
             margin="normal"
             required
           />
-          
+
           <TextField
             label="Date Found"
-            name="dateFound"
+            name="date"
             type="date"
-            value={formData.dateFound}
+            value={formData.date}
             onChange={handleChange}
             fullWidth
             margin="normal"
             InputLabelProps={{ shrink: true }}
             required
           />
-          
+
+          {/* Optional image input later if needed */}
+          <TextField
+            label="Image URL"
+            name="image"
+            value={formData.image}
+            onChange={handleChange}
+            fullWidth
+            margin="normal"
+          />
+
           <Button
             type="submit"
             variant="contained"
             startIcon={<AddCircle />}
             sx={{ mt: 2 }}
+            disabled={loading}
           >
-            Add Item
+            {loading ? "Submitting..." : "Add Item"}
           </Button>
         </form>
       </Paper>

@@ -33,7 +33,7 @@ function OfferReward({ onSubmit }) {
     onSubmit(reward);
     setAmount('');
     setPhone('');
-    setStatus('✅ Payment initiated successfully!');
+    setStatus('Payment initiated successfully!');
   };
 
   return (

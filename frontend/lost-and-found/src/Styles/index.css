@@ -38,6 +38,45 @@
 .hero-buttons button:hover {
   background-color: #c8e6c9;
 }
+.signup-container {
+  max-width: 400px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #fdfdfd;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.signup-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.signup-form label {
+  margin-bottom: 1rem;
+}
+
+.signup-form input {
+  padding: 0.5rem;
+  border: 1px solid #aaa;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.signup-form button {
+  padding: 0.6rem;
+  margin-top: 1rem;
+  background-color: #2b7cff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.signup-form button:hover {
+  background-color: #1f5fc2;
+}
 
 .reward-container {
   padding: 1.5rem;
@@ -334,6 +373,19 @@ button:hover {
 
 .all {
   background-color: white;
+}
+.menu-icon {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: white;
+  cursor: pointer;
+  margin-right: 1rem;
+}
+
+.menu-icon:hover {
+  color: #ffffff;
+  opacity: 0.8;
 }
 
 .report-form-container {
@@ -685,4 +737,46 @@ button[type="submit"]:hover {
 .sidebar a.active {
   font-weight: bold;
   text-decoration: underline;
+}
+
+.profile-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  background-color: #f4f4f4;
+  min-height: 100vh;
+}
+
+.profile-card {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  max-width: 400px;
+  width: 100%;
+}
+
+.profile-icon {
+  margin-bottom: 10px;
+}
+
+.profile-name {
+  font-size: 24px;
+  margin: 10px 0;
+  color: #2c3e50;
+}
+
+.profile-email {
+  font-size: 16px;
+  color: #555;
+}
+
+.profile-img {
+  margin-top: 15px;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
 }

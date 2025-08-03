@@ -1,6 +1,5 @@
 import { useState } from "react";
 
-
 const PostItem = () => {
     const categories = [
         { id: 1, name: "Electronics" },
@@ -18,7 +17,7 @@ const PostItem = () => {
 
     const handleImageChange = (e) => setImage(e.target.files[0]);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (!name || !location || !date || !image || !description || !category) {
@@ -28,19 +27,41 @@ const PostItem = () => {
 
         setLoading(true);
 
-        setTimeout(() => {
-            console.table({ name, location, date, image, description, category });
-            alert("Item posted successfully!");
-            setLoading(false);
+        const formData = new FormData();
+        formData.append("title", name);
+        formData.append("location", location);
+        formData.append("date", date);
+        formData.append("image", image);
+        formData.append("description", description);
+        formData.append("category", category);
+        formData.append("user_id", 1); // Adjust as needed
 
-            // Clear form
-            setName("");
-            setLocation("");
-            setDate("");
-            setImage(null);
-            setDescription("");
-            setCategory("");
-        }, 1500);
+        try {
+            const response = await fetch("http://localhost:5000/found-items", {
+                method: "POST",
+                body: formData,
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                alert("Item posted successfully!");
+                // Clear form
+                setName("");
+                setLocation("");
+                setDate("");
+                setImage(null);
+                setDescription("");
+                setCategory("");
+            } else {
+                alert(result.message || "Failed to post item.");
+            }
+        } catch (error) {
+            console.error("Error posting item:", error);
+            alert("Network error. Please try again.");
+        }
+
+        setLoading(false);
     };
 
     return (
@@ -95,6 +116,7 @@ const PostItem = () => {
                             id="image"
                             onChange={handleImageChange}
                             className="postitem-file-input"
+                            required
                         />
                     </div>
 
@@ -121,7 +143,7 @@ const PostItem = () => {
                         >
                             <option value="">Select category</option>
                             {categories.map((cat) => (
-                                <option key={cat.id} value={String(cat.id)}>
+                                <option key={cat.id} value={cat.name}>
                                     {cat.name}
                                 </option>
                             ))}

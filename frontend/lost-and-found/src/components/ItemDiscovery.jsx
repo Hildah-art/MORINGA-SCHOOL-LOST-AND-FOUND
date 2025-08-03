@@ -1,142 +1,146 @@
-// src/components/ItemDiscovery.jsx
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-
-const TABS = ["All", "Lost", "Found"];
-const URGENCY_LEVELS = ["Low", "Medium", "High"];
+const API_BASE = "http://localhost:5000"; 
 
 const ItemDiscovery = () => {
     const [items, setItems] = useState([]);
-    const [filteredItems, setFilteredItems] = useState([]);
-    const [activeTab, setActiveTab] = useState("All");
+    const [filter, setFilter] = useState("all");
     const [search, setSearch] = useState("");
-    const [filters, setFilters] = useState({ category: "", date: "", location: "", urgency: "" });
+    const [category, setCategory] = useState("");
+    const [urgency, setUrgency] = useState("");
+    const [date, setDate] = useState("");
+    const [location, setLocation] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
+
+    const fetchItems = async () => {
+        setLoading(true);
+        setError("");
+
+        let endpoint = "/all-items";
+        if (filter === "lost") endpoint = "/lost-items";
+        else if (filter === "found") endpoint = "/found-items";
+
+        try {
+            const response = await axios.get(`${API_BASE}${endpoint}`, {
+                params: {
+                    search,
+                    category,
+                    urgency,
+                    date,
+                    location,
+
+
+                },
+            });
+
+            const data = response.data;
+            if (Array.isArray(data)) {
+                setItems(data);
+            } else {
+                setItems([]);
+                console.error("Expected array, got:", data);
+            }
+        } catch (err) {
+            console.error("Error fetching items:", err);
+            setError("Failed to load items.");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        axios.get("http://localhost:3000/items")
-            .then(res => {
-                setItems(res.data);
-                setFilteredItems(res.data);
-          })
-            .catch(err => console.error(err));
-    }, []);
+        fetchItems();
+    }, [filter, category, urgency, date, location]);
 
-    useEffect(() => {
-        let temp = [...items];
-
-        if (activeTab !== "All") {
-            temp = temp.filter(item => item.status === activeTab);
-        }
-
-        if (filters.category) {
-            temp = temp.filter(item => item.category === filters.category);
-        }
-
-        if (filters.date) {
-            temp = temp.filter(item => item.date === filters.date);
-        }
-
-        if (filters.location) {
-            temp = temp.filter(item => item.location.toLowerCase().includes(filters.location.toLowerCase()));
-        }
-
-        if (filters.urgency) {
-            temp = temp.filter(item => item.urgency === filters.urgency);
-        }
-
-        if (search) {
-            temp = temp.filter(item =>
-                item.name.toLowerCase().includes(search.toLowerCase()) ||
-                item.description.toLowerCase().includes(search.toLowerCase())
-            );
-        }
-
-        setFilteredItems(temp);
-    }, [activeTab, search, filters, items]);
+    const handleSearch = (e) => {
+        e.preventDefault();
+        fetchItems();
+    };
 
     return (
-        <div className="itemdiscovery-wrapper">
-            <h1 className="itemdiscovery-title">Item Listings</h1>
+        <div className="p-6 max-w-7xl mx-auto">
+            <h2 className="text-2xl font-bold mb-4">🔍 Discover Items</h2>
 
-            <div className="itemdiscovery-top-controls">
-                <div className="itemdiscovery-tabs">
-                    {TABS.map(tab => (
-                        <button
-                            key={tab}
-                            className={`tab-button ${activeTab === tab ? "active" : ""}`}
-                            onClick={() => setActiveTab(tab)}
-                        >
-                            {tab}
-                        </button>
-                    ))}
-                </div>
-
+            <form onSubmit={handleSearch} className="mb-4 grid gap-2 md:grid-cols-3 lg:grid-cols-4">
                 <input
                     type="text"
                     placeholder="Search items..."
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    className="search-input"
+                    className="p-2 border rounded"
                 />
-            </div>
 
-            <div className="itemdiscovery-filters">
-                <select
-                    onChange={(e) => setFilters(prev => ({ ...prev, category: e.target.value }))}
-                    className="filter-select"
-                >
+                <select value={filter} onChange={(e) => setFilter(e.target.value)} className="p-2 border rounded">
+                    <option value="all">All Items</option>
+                    <option value="lost">Lost Items</option>
+                    <option value="found">Found Items</option>
+                </select>
+
+                <select value={category} onChange={(e) => setCategory(e.target.value)} className="p-2 border rounded">
                     <option value="">All Categories</option>
-                    <option value="Electronics">Electronics</option>
-                    <option value="Clothing">Clothing</option>
-                    <option value="Documents">Documents</option>
+                    <option value="electronics">Electronics</option>
+                    <option value="clothing">Clothing</option>
+                    <option value="documents">Documents</option>
+                    <option value="accessories">Accessories</option>
+                    <option value="other">Other</option>
+                </select>
+
+                <select value={urgency} onChange={(e) => setUrgency(e.target.value)} className="p-2 border rounded">
+                    <option value="">All Urgencies</option>
+                    <option value="low">Low</option>
+                    <option value="moderate">Moderate</option>
+                    <option value="high">High</option>
                 </select>
 
                 <input
                     type="date"
-                    onChange={(e) => setFilters(prev => ({ ...prev, date: e.target.value }))}
-                    className="filter-input"
+                    value={date}
+                    onChange={(e) => setDate(e.target.value)}
+                    className="p-2 border rounded"
                 />
 
                 <input
                     type="text"
                     placeholder="Location"
-                    onChange={(e) => setFilters(prev => ({ ...prev, location: e.target.value }))}
-                    className="filter-input"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                    className="p-2 border rounded"
                 />
 
-                <select
-                    onChange={(e) => setFilters(prev => ({ ...prev, urgency: e.target.value }))}
-                    className="filter-select"
-                >
-                    <option value="">All Urgencies</option>
-                    {URGENCY_LEVELS.map(level => (
-                        <option key={level} value={level}>{level}</option>
-                    ))}
-                </select>
-            </div>
+                <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 col-span-1">
+                     Search
+                </button>
+            </form>
 
-            <div className="itemdiscovery-grid">
-                {filteredItems.map(item => (
-                    <div key={item.id} className="item-card">
-                        <img
-                            src={item.imageUrl || "https://via.placeholder.com/150"}
-                            alt={item.name}
-                            className="item-image"
-                        />
-                        <h2 className="item-title">{item.name}</h2>
-                        <p className="item-description">{item.description.slice(0, 60)}...</p>
-                        <p className="item-date">Date: {item.date}</p>
-                        <p className="item-urgency">Urgency: {item.urgency || "Not specified"}</p>
-                        <Link
-                            to={`/items/${item.id}`}
-                            className="item-link"
-                        >
-                            View Details
-                        </Link>
-                    </div>
-                ))}
+            {loading && <p className="text-gray-500">Loading items...</p>}
+            {error && <p className="text-red-500">{error}</p>}
+
+            <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                {items.length === 0 && !loading ? (
+                    <p className="col-span-full text-gray-500 text-center">No items found.</p>
+                ) : (
+                    items.map((item) => (
+                        <div key={item.id} className="border p-4 rounded shadow bg-white">
+                            <img
+                                src={
+                                    item.photo // 🔁 adjust this key to match your backend (e.g., item.image, item.image_path, item.image_url)
+                                        ? `${API_BASE}/${item.photo}`
+                                        : "https://via.placeholder.com/300x200.png?text=No+Image"
+                                }
+                                alt={item.title || "Item"}
+                                className="w-full h-40 object-cover rounded mb-2"
+                            />
+                            <h3 className="text-lg font-semibold">{item.title || "Untitled Item"}</h3>
+                            <p className="text-sm text-gray-600">{item.description || "No description provided."}</p>
+                            <p className="text-sm">📦 <strong>Category:</strong> {item.category || "N/A"}</p>
+                            <p className="text-sm">🚨 <strong>Urgency:</strong> {item.urgency || "N/A"}</p>
+                            <p className="text-sm">📍 <strong>Location:</strong> {item.location || "N/A"}</p>
+                            <p className="text-sm">📅 <strong>Date:</strong> {item.date?.slice(0, 10) || "N/A"}</p>
+                        </div>
+                    ))
+                )}
             </div>
         </div>
     );

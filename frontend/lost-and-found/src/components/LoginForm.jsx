@@ -1,66 +1,58 @@
-import { useState } from "react";
+import React, { useState } from "react";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-
 const LoginForm = () => {
-  const navigate = useNavigate();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (email === "user@example.com" && password === "123456") {
-      setError("");
-      navigate("/profile");
-    } else {
-      setError("Invalid email or password.");
-    }
+    axios.post("http://127.0.0.1:5000/login", {
+      email,
+      password
+    })
+    .then((res) => {
+      const { token, user } = res.data;
+
+      // ✅ Store token and user info
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
+
+      // ✅ Redirect to user's profile page
+      navigate(`/profile/${user.id}`);
+    })
+    .catch((err) => {
+      console.error("Login error:", err);
+      alert("Invalid email or password.");
+    });
   };
 
   return (
     <div className="login-container">
-      <div className="login-box">
-        <h2 className="login-title">Login</h2>
+      <form onSubmit={handleSubmit} className="login-form">
+        <h2>Login</h2>
 
-        <form onSubmit={handleSubmit} className="login-form">
-          <div className="form-group">
-            <label htmlFor="email">Email</label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
 
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
 
-          {error && <p className="error-message">{error}</p>}
-
-          <div className="forgot-container">
-            <button type="button" className="forgot-password">
-              Forgot password?
-            </button>
-          </div>
-
-          <button type="submit" className="login-button">
-            Login
-          </button>
-        </form>
-      </div>
+        <button type="submit">Login</button>
+      </form>
     </div>
   );
 };

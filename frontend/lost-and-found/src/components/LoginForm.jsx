@@ -13,9 +13,11 @@ const LoginForm = () => {
     try {
       const res = await axios.post("http://localhost:5000/login", { email, password });
 
+      console.log("Server response:", res.data);
+
       if (res.data && res.data.user) {
         localStorage.setItem("user", JSON.stringify(res.data.user));
-        navigate("/profile");
+        navigate("/profile"); 
       } else {
         alert("Login response malformed.");
       }

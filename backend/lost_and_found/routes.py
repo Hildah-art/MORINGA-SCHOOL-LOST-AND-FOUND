@@ -7,6 +7,7 @@ from werkzeug.security import check_password_hash
 from .models import db, User, LostItem, FoundItem, Claim, Message, Notification, Reward, Comment
 from datetime import datetime
 from werkzeug.utils import secure_filename
+from flask_cors import cross_origin
 from flask_jwt_extended import jwt_required, get_jwt_identity, create_access_token
 from flask import render_template
 
@@ -52,7 +53,7 @@ def create_lost_item():
         urgency=urgency,
         date=datetime.strptime(date, "%Y-%m-%d").date() if date else None,
         image_url=image_url,
-        user_id=user_id,  # ✅ MISSING COMMA FIXED HERE
+        user_id=user_id,  
         description=description,
         location=location,
     )
@@ -66,8 +67,8 @@ def create_lost_item():
 @routes.route('/found-items', methods=['POST'])
 def create_found_item():
     title = request.form.get('title')  
-    location_found = request.form.get('location')  # ✅ matches model
-    date_found = request.form.get('date_found')  # Format: YYYY-MM-DD
+    location_found = request.form.get('location')  
+    date_found = request.form.get('date_found')  
     description = request.form.get('description')
     category = request.form.get('category') 
     user_id = request.form.get('user_id')
@@ -106,7 +107,7 @@ def get_all_items():
         "id": item.id,
         "title": item.title,
         "description": item.description or "",
-        "image_url": item.image_url or "",  # ← Directly use the full URL
+        "image_url": item.image_url or "",  
         "location": item.location or "",
         "date": item.date.strftime("%Y-%m-%d") if item.date else "",
         "urgency": item.urgency or "",
@@ -118,7 +119,7 @@ def get_all_items():
         "id": item.id,
         "title": item.title,
         "description": item.description or "",
-        "image_url": item.image_url or "",  # ← Directly use the full URL
+        "image_url": item.image_url or "",  
         "location": item.location_found or "",
         "date": item.date_found.strftime("%Y-%m-%d") if item.date_found else "",
         "urgency": "",
@@ -140,7 +141,7 @@ def submit_claim():
     if proof_file:
         filename = secure_filename(proof_file.filename)
         upload_folder = current_app.config.get("UPLOAD_FOLDER", "static/uploads")
-        os.makedirs(upload_folder, exist_ok=True)  # create folder if missing
+        os.makedirs(upload_folder, exist_ok=True)  
         file_path = os.path.join(upload_folder, filename)
         proof_file.save(file_path)
 
@@ -231,8 +232,10 @@ def get_user_messages(user_id):
         (Message.sender_id == user_id) | (Message.receiver_id == user_id)
     ).all()
     return jsonify([m.serialize() for m in messages])
+# login route
 
 @routes.route('/login', methods=['POST', 'OPTIONS'])
+@cross_origin()
 def login():
     if request.method == 'OPTIONS':
         return jsonify({'status': 'CORS preflight OK'}), 200
@@ -271,3 +274,51 @@ def login():
             "role": user.role
         }
     }), 200
+
+# signup route
+@routes.route('/signup', methods=['POST', 'OPTIONS'])
+@cross_origin()  
+def signup():
+    if request.method == 'OPTIONS':
+        return jsonify({'status': 'CORS preflight OK'}), 200
+
+    data = request.get_json()
+
+    name = data.get('name')
+    email = data.get('email')
+    password = data.get('password')
+    phone = data.get('phone')
+    role = data.get('role')
+
+    # Check if email already exists
+    if User.query.filter_by(email=email).first():
+        return jsonify({'error': 'User already exists'}), 409
+
+    # Hash password
+    hashed_password = generate_password_hash(password)
+
+    # Create new user
+    new_user = User(
+        full_name=name,
+        email=email,
+        password_hash=hashed_password,
+        phone=phone,
+        role=role
+    )
+
+    try:
+        db.session.add(new_user)
+        db.session.commit()
+
+        return jsonify({
+            'message': 'Signup successful',
+            'user': {
+                'id': new_user.id,
+                'name': new_user.full_name,
+                'email': new_user.email,
+                'role': new_user.role
+            }
+        }), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': f"Database error: {str(e)}"}), 500

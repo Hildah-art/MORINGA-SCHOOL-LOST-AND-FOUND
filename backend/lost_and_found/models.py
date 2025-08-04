@@ -63,7 +63,7 @@ class LostItem(db.Model):
     image_url = db.Column(db.String(255))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-
+    # FoundItem
 # ---------------------
 class FoundItem(db.Model):
     __tablename__ = 'found_items'
